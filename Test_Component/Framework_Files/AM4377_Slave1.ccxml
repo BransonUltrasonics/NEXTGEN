@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configurations XML_version="1.2" id="configurations_0">
+    <configuration XML_version="1.2" id="Texas Instruments XDS2xx USB Debug Probe_0">
+        <instance XML_version="1.2" desc="Texas Instruments XDS2xx USB Debug Probe_0" href="connections/TIXDS2XXUSB_Connection.xml" id="Texas Instruments XDS2xx USB Debug Probe_0" xml="TIXDS2XXUSB_Connection.xml" xmlpath="connections"/>
+        <connection XML_version="1.2" id="Texas Instruments XDS2xx USB Debug Probe_0">
+            <instance XML_version="1.2" href="drivers/tixds560icepick_d.xml" id="drivers" xml="tixds560icepick_d.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cs_dap.xml" id="drivers" xml="tixds560cs_dap.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cortexM.xml" id="drivers" xml="tixds560cortexM.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cs_child.xml" id="drivers" xml="tixds560cs_child.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560cortexA9.xml" id="drivers" xml="tixds560cortexA9.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560csstm.xml" id="drivers" xml="tixds560csstm.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560etbcs.xml" id="drivers" xml="tixds560etbcs.xml" xmlpath="drivers"/>
+            <instance XML_version="1.2" href="drivers/tixds560pru.xml" id="drivers" xml="tixds560pru.xml" xmlpath="drivers"/>
+            <property Type="stringfield" Value="7" id="portAddr1"/>
+            <platform XML_version="1.2" id="platform_0">
+                <instance XML_version="1.2" desc="IDK_AM437X_0" href="boards/idk_am437x.xml" id="IDK_AM437X_0" xml="idk_am437x.xml" xmlpath="boards"/>
+            <board XML_version="1.2" description="AM437x Industrial Development Kit." id="IDK_AM437X_0">
+                    <device HW_revision="1" XML_version="1.2" description="AM43xx - Cortex A9 Embedded Processor" id="AM4379_0" partnum="AM4379" simulation="no">
+                        <router HW_revision="1.0" XML_version="1.2" description="ICEPick_D Router" id="IcePick_D_0" isa="ICEPICK_D">
+                            <subpath id="DAP">
+                                <router HW_revision="1.0" XML_version="1.2" description="CS_DAP Router" id="CS_DAP_DebugSS" isa="CS_DAP">
+                                    <subpath id="MPUSS">
+                                        <cpu HW_revision="1.0" XML_version="1.2" desc="CortexA9" description="CortexA9 CPU" deviceSim="false" id="CortexA9" isa="CortexA9"/>
+                                    </subpath>
+                                </router>
+                            </subpath>
+                        </router>
+                    </device>
+                </board>
+            </platform>
+        </connection>
+    </configuration>
+</configurations>

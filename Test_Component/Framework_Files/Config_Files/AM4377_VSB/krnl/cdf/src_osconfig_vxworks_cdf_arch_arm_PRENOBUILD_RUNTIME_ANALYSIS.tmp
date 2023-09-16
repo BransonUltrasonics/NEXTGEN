@@ -1,0 +1,14 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+
+Layer Layer::RUNTIME_ANALYSIS {
+	NAME RUNTIME_ANALYSIS
+}

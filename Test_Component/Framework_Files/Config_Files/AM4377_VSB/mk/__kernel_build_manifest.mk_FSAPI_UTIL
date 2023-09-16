@@ -1,0 +1,14 @@
+
+# this file is generated
+
+# layers that have been built in the VSB
+__BUILT_LAYERS += FSAPI_UTIL
+
+__OBJS_BUILT_FSAPI_UTIL = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrDosFsOld.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/tarLib.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrFsLib.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrDosFsOld.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/tarLib.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrFsLib.d
+
+
+# built libraries
+__BUILT_LIBRARIES += krnl_ARMARCH7_common_fsapiUtil
+
+
+__OBJS_BUILT_krnl_ARMARCH7_common_fsapiUtil = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrDosFsOld.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/tarLib.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objfsapiUtil/usrFsLib.o 

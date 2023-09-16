@@ -1,0 +1,19 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/ostools-1.0.2.7/cdf/01rtpdebug.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/ostools-1.0.2.7/cdf/01spy.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/ostools-1.0.2.7/cdf/01symbols.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/ostools-1.0.2.7/cdf/01timex.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/ostools-1.0.2.7/cdf/01tip.cdf>
+
+Layer Layer::OSTOOLS {
+	NAME OSTOOLS
+}

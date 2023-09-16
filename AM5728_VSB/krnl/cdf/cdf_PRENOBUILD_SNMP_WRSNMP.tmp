@@ -1,0 +1,14 @@
+
+/* this file is generated */
+
+/* VSB is C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/h/config/vsbConfig.h>
+
+
+
+Layer Layer::SNMP_WRSNMP {
+	NAME SNMP_WRSNMP
+}

@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--###################################################
+        BRANSON AUTOMATION FRAMEWORK - ULTRASONIC
+
+Filename:    Cov_Build_VSB_VIP_4377.xml
+Description: This file is an ANT script to perform Coverity build the VSB VIP Project of PC and AC.
+Pre-condition: 1. All the required input to be given by control.properties
+		  2. set "WIND_LAYER_PATHS" TO BRANSON_DRV_LAYER Layer Path as an environment variable
+		  3. set "WIND_BSP_PATHS" TO Individual BSP’s Layer Path separated using semicolon as an environment variable
+		  4. set "WIND_WRTOOL_WORKSPACE" = C:\Branson_Automation\Build\
+		  5. add wrtool.bat path to the system path
+1. This file is invoked by Master.xml with appropriate properties
+2. WRtool is utilized to perform VSB and VIP build in VxWorks
+3. This file performs coverity vsb and vip builds to generated VxWorks.bin
+4. The build types supported are quick build and clean build
+
+#####################################################-->
+<project basedir="." name="Cov_Build_VSB_VIP_4377" default="main">
+	
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	<property file="${basedir}/../Framework_Files/Control.properties"/>
+	
+	<!--Navigating to Workbench path-->
+	<property name = "navWorkbench" value = "${WORKBENCH_PATH}"/>
+	
+	<!--Navigating to Workspace path-->
+	<property name = "navWorkspace" value = "${WORKSPACE_PATH}"/>
+	
+	<!--Navigating to Reference Workspace path -->
+	<property name="navReferenceWorspace" value="${VSB_VIP_WORKSPACE_PATH}"/>
+
+	<!--Navigating to the source code path in Windriver Workbench-->
+	<property name = "navSourceWorkbench" value = "${navWorkbench}\vxworks-7"/>
+	
+	<!--VSB Project Name-->
+	<property name = "vsbName" value = "${AC_PC_VSB_NAME}"/>
+	
+	<!--VIP Project Name-->
+	<property name = "vipName" value = "${AC_PC_VIP_NAME}"/>
+
+	
+	<!--Provides the path of vxWorks.bin-->
+	<property name = "binaryPath" value = "${navWorkspace}\${vipName}\default"/> 
+	
+	<!--Coverity result path -->
+	<property name= "cov_build_VIP_4377_result_path" value="${basedir}\\..\\..\\Results_Next_Gen\\${TIMESTAMP}\\Coverity_Build_Result\\VIP_4377_Coverity_Build_Result_${TIMESTAMP}"/>
+			
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<target name="Delete_Previous_project">
+		<available file="${navReferenceWorspace}\${AC_PC_VIP_NAME}"  property="vip.present"/>
+		<available file="${navReferenceWorspace}\${AC_PC_VSB_NAME}"  property="vsb.present"/>
+		<if>
+		<equals arg1="${vip.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<echo message="[Cov_Build_VSB_VIP_4377] Deleting the VIP project created during the previous build ..." />
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${AC_PC_VIP_NAME}"/>
+			</exec>
+			<echo message="[Cov_Build_VSB_VIP_4377] VIP Project with the same name was deleted." />
+		</then>
+		</if>
+		
+		<if>
+		<equals arg1="${vsb.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<echo message="[Cov_Build_VSB_VIP_4377] Deleting the VSB project created during the previous build ..." />
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${AC_PC_VSB_NAME}"/>
+			</exec>
+			<echo message="[Cov_Build_VSB_VIP_4377] VSB Project with the same name was deleted." />
+		</then>
+		</if>
+	</target>
+	
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_Files_VIP">
+		<echo message="[Cov_Build_VSB_VIP_4377]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${AC_PC_VIP_NAME}" >
+			<fileset dir="${basedir}\..\${AC_PC_VIP_NAME}" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_Files_VSB">
+		<echo message="[Cov_Build_VSB_VIP_4377]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${AC_PC_VSB_NAME}" >
+			<fileset dir="${basedir}\..\${AC_PC_VSB_NAME}" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Target to perform VSB Import-->
+	<target name="VSB_Import">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VSB Import****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj import ${AC_PC_VSB_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VSB Clean  for Clean build-->
+	<target name="VSB_Clean">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VSB Clean****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj clean ${AC_PC_VSB_NAME}"/>
+		</exec>
+	</target>	
+	
+	<!--Target to perform VSB Build-->
+	<target name="VSB_Build">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VSB Build****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat -data ${navReferenceWorspace} prj build ${AC_PC_VSB_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform SYNC VSB-->
+	<target name="SYNC_VSB">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VSB SYNC****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="false" >
+				<arg line="/c wrtool.bat prj context update -vsb ${AC_PC_VSB_NAME} -toolchain"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VIP Import-->
+	<target name="VIP_Import">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VIP Import****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj import ${AC_PC_VIP_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VIP Clean-->
+	<target name="vip_clean">
+		<echo message="[Cov_Build_VSB_VIP_4377] ****Performing VIP Clean****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj clean ${AC_PC_VIP_NAME}"/>
+		</exec>
+	</target>
+	
+	<target name="coverity_build_VIP">
+		<trycatch>
+			<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+				<arg line="/c cov-build.exe --dir ${cov_build_VIP_4377_result_path} wrtool prj build ${navReferenceWorspace}\${AC_PC_VIP_NAME}"/>
+			</exec>
+			</try>
+			<catch>
+				<if>
+					<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="FAIL"/>
+						<entry  key="AC_Coverity_Error_Description" value="AC VSB VIP build failed"/>
+					</propertyfile>
+				</then>
+				<elseif>
+					<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="PC_Coverity_Status" value="FAIL"/>
+						<entry  key="PC_Coverity_Error_Description" value="PC VSB VIP build failed"/>
+					</propertyfile>
+				</then>
+				</elseif>
+				<else>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="FAIL"/>
+						<entry  key="PC_Coverity_Status" value="FAIL"/>
+						<entry  key="AC_Coverity_Error_Description" value="AC VSB VIP build failed"/>
+						<entry  key="PC_Coverity_Error_Description" value="PC VSB VIP build failed"/>
+					</propertyfile>
+				</else>
+				</if>			
+				<fail>"[Cov_Build_VSB_VIP_4377] ***Fail! Coverity Build failed due to the VSB VIP build failure"</fail>
+			</catch>
+		</trycatch>
+		<!--Checking if the build log file is present or not -->
+		<available file="${cov_build_VIP_4377_result_path}\build-log.txt"  property="log.present"/>
+		<trycatch>
+			<try>
+				<if>
+					<equals arg1="${log.present}" arg2="true"/>
+				<then>
+					<echo>"[Cov_Build_VSB_VIP_4377]Build-log file is present at ${cov_build_VIP_4377_result_path}"</echo>
+				</then>
+				<else>
+				<if>
+					<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="FAIL"/>
+						<entry  key="AC_Coverity_Error_Description" value="Build-Log file not present"/>
+					</propertyfile>
+				</then>
+				<elseif>
+					<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="PC_Coverity_Status" value="FAIL"/>
+						<entry  key="PC_Coverity_Error_Description" value="Build-Log file not present"/>
+					</propertyfile>
+				</then>
+				</elseif>
+				<else>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="FAIL"/>
+						<entry  key="PC_Coverity_Status" value="FAIL"/>
+						<entry  key="AC_Coverity_Error_Description" value="Build-Log file not present"/>
+						<entry  key="PC_Coverity_Error_Description" value="Build-Log file not present"/>
+					</propertyfile>
+				</else>
+				</if>				
+				<fail>"[Cov_Build_VSB_VIP_4377] ***Fail! Build-log is not present at ${cov_build_VIP_4377_result_path}"</fail>
+				</else>
+				</if>
+			</try>
+			<catch>
+
+			</catch>
+		</trycatch>
+	</target>
+	
+	<target name="coverity-analysis">
+	<echo>"[Cov_Build_VSB_VIP_4377]Performing coverity analysis for VSB_VIP Build "</echo>
+	<trycatch>
+		<try>
+		<!-- run the coverity analysis and get the summary of the log -->
+		<exec dir="${cov_build_path}" executable="cmd" failonerror="false" >
+			<arg line="/c cov-analyze.exe --dir ${cov_build_VIP_4377_result_path}"/>
+		</exec>
+		</try>
+		<catch>
+			<if>
+				<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity analyze command exit with error"/>
+				</propertyfile>
+			</then>
+			<elseif>
+				<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity analyze command exit with error"/>
+				</propertyfile>
+			</then>
+			</elseif>
+			<else>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity analyze command exit with error"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity analyze command exit with error"/>
+				</propertyfile>
+			</else>
+			</if>
+			<fail>"[Cov_Build_VSB_VIP_4377] ***Fail! coverity analyze command exit with error for VSB VIP Build****"</fail>
+		</catch>
+	</trycatch>
+	<available file="${cov_build_VIP_4377_result_path}\output\analysis-log.txt"  property="analysislog.present"/>
+	<trycatch>
+		<try>
+		<if>
+		<equals arg1="${analysislog.present}" arg2="true"/>
+		<then>
+			<echo>"[[Cov_Build_VSB_VIP_4377]Analysislog.txt is present at ${cov_build_VIP_4377_result_path}\output"</echo>
+		</then>
+		<else>
+			<if>
+				<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity analysis failed for VSB VIP AC Build"/>
+				</propertyfile>
+			</then>
+			<elseif>
+				<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity analysis failed for VSB VIP PC Build"/>
+				</propertyfile>
+			</then>
+			</elseif>
+			<else>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity analysis failed for VSB VIP AC Build"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity analysis failed for VSB VIP PC Build"/>
+				</propertyfile>
+			</else>
+			</if>
+		</else>
+		</if>
+		</try>
+		<catch>			
+			<fail>"[Cov_Build_VSB_VIP_4377] ***Fail! Analysislog.txt is not present at ${cov_build_VIP_4377_result_path}\output and coverity analysis failed for VIP PC_AC build"</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	<target name="coverity-format">
+	<trycatch>
+		<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+				<arg line="/c cov-format-errors.exe --dir ${cov_build_VIP_4377_result_path}"/>
+			</exec>
+		</try>
+		<catch>
+			<if>
+				<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="Coverity format command exit with error"/>
+				</propertyfile>
+			</then>
+			<elseif>
+				<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Error_Description" value="Coverity format command exit with error"/>
+				</propertyfile>
+			</then>
+			</elseif>
+			<else>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="Coverity format command exit with error"/>
+					<entry  key="PC_Coverity_Error_Description" value="Coverity format command exit with error"/>
+				</propertyfile>
+			</else>
+			</if>			
+			<fail>"[Cov_Build_VSB_VIP_4377]***Fail! Coverity format command exit with error "</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	<target name="coverity-error-count">
+	<trycatch>
+		<try>		
+			<loadfile property="cov-analysis-log" srcfile="${cov_build_VIP_4377_result_path}\output\analysis-log.txt" /> 
+			<for param="line" delimiter="${line.separator}" list="${cov-analysis-log}">
+				<sequential>
+					<propertyregex property="defect_present" input="@{line}" regexp="Defect occurrences found\s*:\s*([0-9]+)" select="\1" casesensitive="false" />
+				</sequential>
+			</for>
+			<echo>"Coverity flag : ${coverityStopOnError} "</echo>
+			<echo>"defect count: ${defect_present}"</echo>
+			<condition property="defect_present" value="-1">
+				<isset property="defect_present"/>
+			</condition> 
+			<condition property="check">
+				<matches pattern="[1-9]" string="${defect_present}"/>
+			</condition>
+			<if>
+			<equals arg1="${check}" arg2="true"/>
+			<then>
+				<if>
+					<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="PASS"/>
+						<entry  key="AC_Coverity_Error_Description" value="AC_PC_VIP ${defect_present} Defect count"/>
+					</propertyfile>
+				</then>
+				<elseif>
+					<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="PC_Coverity_Status" value="PASS"/>
+						<entry  key="PC_Coverity_Error_Description" value="AC_PC_VIP ${defect_present} Defect count"/>
+					</propertyfile>
+				</then>
+				</elseif>
+				<else>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="PASS"/>
+						<entry  key="PC_Coverity_Status" value="PASS"/>
+						<entry  key="AC_Coverity_Error_Description" value="${defect_present} Defect count"/>
+						<entry  key="PC_Coverity_Error_Description" value="${defect_present} Defect count"/>
+					</propertyfile>
+				</else>
+				</if>
+				<if>
+				<equals arg1="${coverityStopOnError}" arg2="ON" casesensitive="false"/>
+					<then>
+						<fail> </fail>
+					</then>
+				</if>
+			</then>
+			<else>
+				<echo>"[Cov_Build_VSB_VIP_4377]Coverity Build passed for VSB VIP Component"</echo>
+				<if>
+					<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="PASS"/>
+					</propertyfile>
+				</then>
+				<elseif>
+					<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+				<then>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="PC_Coverity_Status" value="PASS"/>
+					</propertyfile>
+				</then>
+				</elseif>
+				<else>
+					<propertyfile file="${basedir}${navControl}Control.properties">
+						<entry  key="AC_Coverity_Status" value="PASS"/>
+						<entry  key="PC_Coverity_Status" value="PASS"/>
+					</propertyfile>
+				</else>
+				</if>
+			</else>
+			</if>
+			</try>
+			<catch>				
+				<fail message="[Cov_Build_VSB_VIP_4377] ***Fail! Coverity Build failed for 4377"></fail>
+			</catch>
+		</trycatch>
+	</target>
+	
+	<target name="coverity-commit-defects">
+	<trycatch>
+		<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+				<arg line="/c cov-commit-defects.exe --host buc-dan-sl01 --port 8080 --dir ${cov_build_VIP_4377_result_path} --user admin --password Orange56 --stream AC_PC_VIP"/>
+			</exec>
+		</try>
+		<catch>
+			<if>
+				<equals arg1="${bordName}" arg2="AC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity commit command exit with error for 4377"/>
+				</propertyfile>
+			</then>
+			<elseif>
+				<equals arg1="${bordName}" arg2="PC" casesensitive="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity commit command exit with error for 4377"/>
+				</propertyfile>
+			</then>
+			</elseif>
+			<else>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Coverity_Status" value="FAIL"/>
+					<entry  key="PC_Coverity_Status" value="FAIL"/>
+					<entry  key="AC_Coverity_Error_Description" value="coverity commit command exit with error for 4377"/>
+					<entry  key="PC_Coverity_Error_Description" value="coverity commit command exit with error for 4377"/>
+				</propertyfile>
+			</else>
+			</if>	
+			<fail>"[Cov_Build_VSB_VIP_4377] ***Fail! coverity commit command exit with error for 4377****"</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	<target name="main">
+		<trycatch>
+			<try>	
+				<antcall target="Delete_Previous_project">
+				</antcall>
+				
+				<antcall target="Move_Source_Files_VIP">
+				</antcall>
+				
+				<antcall target="Move_Source_Files_VSB">
+				</antcall>
+				
+				<antcall target="VSB_Import">
+				</antcall>
+				
+				<antcall target="VSB_Clean">
+				</antcall>
+				
+				<antcall target="VSB_Build">
+				</antcall>
+				
+				<antcall target="SYNC_VSB">
+				</antcall>
+				
+				<antcall target="VIP_Import">
+				</antcall>			
+			
+				<antcall target="vip_clean">
+				</antcall>
+				
+				<antcall target="coverity_build_VIP">
+				</antcall>
+				
+				<antcall target="coverity-analysis">
+				</antcall>
+				
+				<antcall target="coverity-format">
+				</antcall>
+				
+				<antcall target="coverity-error-count">
+				</antcall>
+				
+				<antcall target="coverity-commit-defects">
+				</antcall>				
+			</try>
+	</trycatch>	
+	</target>
+</project>

@@ -1,0 +1,1304 @@
+<?xml version="1.0"?>
+<!-- 
+#######################################################################################
+        BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics 
+
+Filename:    Branson_Automation_Master.xml
+Description: This file acts as a controller script, which calls build, flash 
+			 and test execution files based on appropriate condition.
+			 From project, first email target is called, which depends on test 
+			 target, test depends on target flash, which internally depends on 
+			 target build. Hence build is executed first, then flash, test and 
+			 then finally email target is executed.  
+Steps:-
+1. Read Input parameters from RTC build properties
+2. Validate input properties
+3. Call build xml files on each board if build is ON
+4. Call flash xml files on each board if flash is ON
+5. Call test execution xml file if test is ON
+########################################################################################
+-->
+<project name="Next_Gen_Ultrasonics" basedir="." default="Main_Target">
+
+	<!--Obtaining TimeStamp of Master Start-->
+	<tstamp>
+		<format property="Master_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+	</tstamp>
+	
+	<!--Writing Master Timestamp into Control.properties-->
+	<propertyfile file="${basedir}/Control.properties">
+		<entry  key="Master_Start_Time" value="${Master_Start_Time}"/>
+	</propertyfile> 
+	
+	<!-- Property file in key value format for validating the execution status-->
+	<property file="${basedir}/../../BAF_Utilities/config.ini" />
+	<property file="Control.properties" />
+	
+	<!-- Loading ant contrib path to master xml file -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+		<!-- Below path should be added as environment variable until "ant-contib-1.0b3-bin"-->
+        <pathelement location="${basedir}\ant-contrib-1.0b3-bin\ant-contrib\ant-contrib-1.0b3.jar"/>
+    </classpath>
+	</taskdef>
+	
+	<!-- javascript task is created to convert all lower case or mixed case input properties to upper case -->
+	<scriptdef language="javascript" name="upper">
+		<attribute name="string" /> 
+		<attribute name="to" />
+		project.setProperty( attributes.get( "to" ),
+        attributes.get( "string" ).toUpperCase() );
+	</scriptdef>
+	
+	<!--Getting current Timestamp for creation all folders and log files-->
+	<tstamp>
+		<format property="TIMESTAMP" pattern="yyyyMMdd_HHmmss"  locale="en,UK"/>
+		<format property="" pattern="yyyyMMdd"  locale="en,UK" />
+	</tstamp>	
+
+	<!-- Input validations
+		 1. Check whether the expected properties are defined. If not, define it with default value.
+		 2. If user inputs invalid property, exit with appropriate message.-->
+		 
+	<!--Navigating to Workspace path-->
+	<property name = "ROMFS_Status" value = "${ROMFS_STATUS}"/>
+
+	<target name="Input_Validation">
+		
+		<echo>"**********************************************************************************"</echo>
+		<echo>"************ BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics *****************"</echo>
+		<echo>"**********************************************************************************"</echo>
+		<echo>"[Master] The Build path as per from the Load Directory: ${team.scm.fetchDestination} " </echo>
+		<echo>"**********************************************************************************"</echo>
+		<echo>"${team.scm.workspaceUUID}"</echo>
+		<condition property="boardName" else="SC,PC,AC">
+			<isset property="boardName"/>
+		</condition>
+		
+		<condition property="buildType" else="RELEASE">
+			<isset property="buildType"/>
+		</condition>
+		
+		<condition property="coverityBuild" else="ON">
+			<isset property="coverityBuild"/>
+		</condition>
+		
+		<condition property="cleanBuild" else="ON">
+			<isset property="cleanBuild"/>
+		</condition>
+		
+		<condition property="build" else="ON">
+			<isset property="build"/>
+		</condition>
+		
+		<condition property="flash" else="ON">
+			<isset property="flash"/>
+		</condition>
+		
+		<condition property="testExecution" else="ON">
+			<isset property="testExecution"/>
+		</condition>
+		
+		<condition property="email" else="ON">
+			<isset property="email"/>
+		</condition>
+		
+		<condition property="coverityStopOnError" else="OFF">
+			<isset property="coverityStopOnError"/>
+		</condition>
+		
+		<condition property="build_DKM" else="ON">
+			<isset property="build_DKM"/>
+		</condition>
+		
+		<condition property="build_RTP" else="ON">
+			<isset property="build_RTP"/>
+		</condition>		
+		
+		<condition property="build_VSB_VIP" else="ON">
+			<isset property="build_VSB_VIP"/>
+		</condition>
+		
+		<condition property="build_QT" else="ON">
+			<isset property="build_QT"/>
+		</condition>
+		
+		<condition property="streamName" else="ON">
+			<isset property="streamName"/>
+		</condition>
+		<!-- Input properties are converted to upper case words so that the input is not case sensitive.
+		User is restricted to input valid property values, if invalid, master exits with appropriate message.-->
+		<upper string="${boardName}" to="upper" />	
+		<fail message="[Master] ***Fail! Invalid board name: ${upper}. The board name should be SC,PC,AC">
+			<condition >
+			<not>
+				<or>
+					<!-- all combinations covered-->
+					<equals arg1="${upper}" arg2="SC,PC,AC" />
+					<equals arg1="${upper}" arg2="PC,AC,SC" />
+					<equals arg1="${upper}" arg2="PC,SC,AC" />
+					<equals arg1="${upper}" arg2="SC,AC,PC" />
+					<equals arg1="${upper}" arg2="AC,PC,SC" />
+					<equals arg1="${upper}" arg2="AC,SC,PC" />
+					<equals arg1="${upper}" arg2="AC,SC" />
+					<equals arg1="${upper}" arg2="SC,AC" />
+					<equals arg1="${upper}" arg2="SC,PC" />
+					<equals arg1="${upper}" arg2="PC,AC" />
+					<equals arg1="${upper}" arg2="PC,SC" />
+					<equals arg1="${upper}" arg2="AC,PC" />
+					<equals arg1="${upper}" arg2="PC" />
+					<equals arg1="${upper}" arg2="AC" />
+					<equals arg1="${upper}" arg2="SC" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<!-- changing the input from SC,AC to SC_AC and storing it in boardName1 inorder to use the name in coverity result Directory -->
+		<property name="boardNames" value="${upper}" />
+		<!--<propertyregex property="boardName1" input="${upper}" regexp="," replace="_" global="true"/> -->
+		<condition property="boardName1" else="${upper}">
+			<isset property="boardName1"/>
+		</condition>
+		
+		<upper string="${buildType}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid build type: ${upper}. The build type should be either Release, Debug">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="RELEASE" />
+					<equals arg1="${upper}" arg2="DEBUG" />
+				</or>
+			</not>
+			</condition>
+		</fail>	
+		
+		<upper string="${coverityBuild}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for coverityBuild: ${upper}. Please enter ON or OFF for Coverity build.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${cleanBuild}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for cleanBuild: ${upper}. Please enter ON or OFF for Clean build.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${build}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for Build: ${upper}. Please enter ON or OFF for build.">
+			<condition>
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${flash}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for flash: ${upper}. Please enter ON or OFF for flash.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${testExecution}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for testExecution: ${upper}. Please enter ON or OFF for test execution.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${email}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for Email: ${upper}. Please enter ON or OFF for email.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${coverityStopOnError}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for coverityStopOnError: ${coverityStopOnError}. Please enter ON or OFF for coverityStopOnError.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${build_DKM}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for build_DKM: ${upper}. Please enter ON or OFF for build DKM.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${build_RTP}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for build_RTP: ${upper}. Please enter ON or OFF for build RTP.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<upper string="${build_VSB_VIP}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for build_VSB_VIP: ${upper}. Please enter ON or OFF for build VSB_VIP.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		
+		<upper string="${build_QT}" to="upper" />
+		<fail message="[Master] ***Fail! Invalid input for build_QT: ${upper}. Please enter ON or OFF for build QT.">
+			<condition >
+			<not>
+				<or>
+					<equals arg1="${upper}" arg2="ON" />
+					<equals arg1="${upper}" arg2="OFF" />
+				</or>
+			</not>
+			</condition>
+		</fail>
+		
+		<!--Input Validation for Test Suite Execution Record Ids-->
+		<condition property="TSERIdCheck">
+			<matches pattern="^\d+(?:,\d+)*$" string="${testExecRecordId}"/>
+		</condition>
+		
+		<condition property="TSERIdCheck" else="false">
+			<isset property="TSERIdCheck"/>
+		</condition>
+		
+		<if>
+			<equals arg1="${testExecution}" arg2="ON" casesensitive="false" />
+			<then>
+				<if>
+					<equals arg1="${TSERIdCheck}" arg2="false"/>
+					<then>
+						<echo message="[Master] Enter comma seperated Numeric values without spaces for testExecRecordId in the build definition..."/>
+						<fail message="[Master] ***Fail! Invalid input for Test Suite Execution Record Id: ${testExecRecordId}."/>
+					</then>
+				</if>
+			</then>
+		</if>
+		
+		<!-- Displaying the user given inputs in the master log file-->		
+		<echo>"Below Properties are selected"</echo>
+		<echo>"***************************************"</echo>
+		<echo>"Stream Name : "${streamName}"</echo>
+		<echo>"Board Selected is : "${boardName}"</echo>
+		<echo>"Build Type selected is : "${buildType}"</echo>
+		<echo>"Coverity Build Mode is ON/OFF? : "${coverityBuild}"</echo>
+		<echo>"Clean Build Mode is ON/OFF? : "${cleanBuild}"</echo>
+		<echo>"Build Mode is ON/OFF? : "${build}"</echo>
+		<echo>"Build VSB and VIP Mode is ON/OFF? : "${build_VSB_VIP}"</echo>
+		<echo>"Build Mode DKM is ON/OFF? : "${build_DKM}"</echo>
+		<echo>"Build Mode RTP is ON/OFF? : "${build_RTP}"</echo>
+		<echo>"Build Mode QT  is ON/OFF? : "${build_QT}"</echo>		
+		<echo>"Flash Mode is ON/OFF? : "${flash}"</echo>
+		<echo>"Test Execution is turned ON/OFF? : "${testExecution}"</echo>
+		<echo>"Test Execution Record IDs : "${testExecRecordId}"</echo>
+		<echo>"Email Mode is ON/OFF? : "${email}"</echo>
+		<echo>"CoverityStopOnError is ON/OFF? : ${coverityStopOnError}"</echo>
+		<echo>"Build Retrieve Path : "${buildRetrievePath}"</echo>		
+		<echo>"****************************************"</echo>
+		
+		<mkdir dir="${basedir}\\..\\..\\Results_Next_Gen\\${TIMESTAMP}"/>
+		
+		<propertyfile file="${basedir}\Control.properties">
+			<entry  key="PC_Host_Name" value="${buildEngineHostName}"/>
+			<entry  key="Build_Definition_Name" value="${buildDefinitionId}"/>
+			<entry  key="Stream_Name" value="${streamName}"/>
+			<entry  key="Build_Label" value="${buildLabel}"/>
+			<entry  key="Build_Requester_User_ID" value="${buildRequesterUserId}"/>
+			<entry  key="Build_Result_UUId" value="${buildResultUUID}"/>
+			<entry  key="Build_Engine_Name" value="${buildEngineId}"/>
+			<entry  key="Build_Type" value="${buildType}"/>
+			<entry  key="buildType" value="${buildType}"/>
+			<entry  key="Board_Name" value="${boardName}"/>
+			<entry  key="Build" value="${build}"/>
+			<entry  key="build" value="${build}" />
+			<entry  key="Build_DKM" value="${build_DKM}"/>
+			<entry  key="Build_RTP" value="${build_RTP}"/>
+			<entry  key="Build_VSB_VIP" value="${build_VSB_VIP}"/>
+			<entry  key="build" value="${build}"/>
+			<entry  key="Build_Retrieve_Storage_Path" value="${buildRetrievePath}"/>
+			<entry  key="Clean_Build" value="${cleanBuild}"/>
+			<entry  key="Coverity_Build" value="${coverityBuild}"/>
+			<entry  key="Flash" value="${flash}"/>
+			<entry  key="Test_Execution" value="${testExecution}"/>
+			<entry  key="Test_Suite_Execution_Record_ID" value="${testExecRecordId}"/>			
+			<entry  key="Date_Time_Stamp" value="${TIMESTAMP}"/>	
+			<entry  key="Date_Stamp" value="${}"/>
+			<entry  key="Email" value="${email}"/>
+		</propertyfile>
+		
+	<echo>"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"</echo>
+	<echo>[Master] Base Directory in use ${basedir}</echo>
+	<echo>"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"</echo>
+	</target>
+	
+	<!--Set Workspace path based on stream name -->
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Integration Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorkspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Branson Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorkspace" value="${WORKSPACE_BRANSON_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Sasken Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorkspace" value="${WORKSPACE_SASKEN_PATH}"/>
+	</then>
+	</if>	
+	
+	<!--Delete previous support files in reference workspace -->
+	<target name = "Delete_Previous_Support_File">
+		<echo message="[Build_RTP_SC]Delete previous support files if exist from reference workspace"/>
+		<delete dir="${navReferenceWorkspace}\_Branson_User_Common" failonerror="false"/>
+		<delete dir="${navReferenceWorkspace}\_Acontis_Technologies" failonerror="false"/>
+		<delete dir="${navReferenceWorkspace}\_Branson_Driver_Layer" failonerror="false"/>
+		<delete dir="${WORKSPACE_PATH}\_Branson_User_Common" failonerror="false"/>
+		<delete dir="${WORKSPACE_PATH}\_Acontis_Technologies" failonerror="false"/>
+		<delete dir="${WORKSPACE_PATH}\_Branson_Driver_Layer" failonerror="false"/>		
+	</target>
+
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_File">
+		<echo message="[Build_RTP_SC]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorkspace}\_Branson_User_Common" >
+			<fileset dir="${basedir}\..\_Branson_User_Common" includes="**"/>
+		</copy>
+		<copy todir="${navReferenceWorkspace}\_Acontis_Technologies" >
+			<fileset dir="${basedir}\..\_Acontis_Technologies" includes="**"/>
+		</copy>
+		<copy todir="${navReferenceWorkspace}\_Branson_Driver_Layer" >
+			<fileset dir="${basedir}\..\_Branson_Driver_Layer" includes="**"/>
+		</copy>
+		<copy todir="${WORKSPACE_PATH}\_Branson_User_Common" >
+			<fileset dir="${basedir}\..\_Branson_User_Common" includes="**"/>
+		</copy>
+		<copy todir="${WORKSPACE_PATH}\_Acontis_Technologies" >
+			<fileset dir="${basedir}\..\_Acontis_Technologies" includes="**"/>
+		</copy>
+		<copy todir="${WORKSPACE_PATH}\_Branson_Driver_Layer" >
+			<fileset dir="${basedir}\..\_Branson_Driver_Layer" includes="**"/>
+		</copy>			
+	</target>
+	
+	<!--Move Config files from Load dir to reference workspace -->
+	<target name = "Move_Config_File">
+		<copy todir="${basedir}\..\AM5728_VSB" overwrite="true" >
+			<fileset dir="${Next_Gen_Util_Path}\Config_Files\AM5728_VSB" includes="**"/>  
+		</copy>
+		<copy todir="${basedir}\..\AM5728_VIP" overwrite="true" >
+			<fileset dir="${Next_Gen_Util_Path}\Config_Files\AM5728_VIP" includes="**"/>  
+		</copy>
+		<copy todir="${basedir}\..\AM4377_VSB" overwrite="true" >
+			<fileset dir="${Next_Gen_Util_Path}\Config_Files\AM4377_VSB" includes="**"/>  
+		</copy>
+		<copy todir="${basedir}\..\AM4377_VIP" overwrite="true" >
+			<fileset dir="${Next_Gen_Util_Path}\Config_Files\AM4377_VIP" includes="**"/>  
+		</copy>
+	</target>
+	
+	<target name="Coverity_Build">
+	
+		<for list="${boardName}" delimiter="," param="iter">
+			<sequential>
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="@{iter}_Coverity_Build_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>			
+
+				<trycatch>				
+					<!--Coverity for VSB and VIP-->
+					<try>
+						<if>
+							<equals arg1="${build_VSB_VIP}" arg2="ON" casesensitive="false" />
+						<then>
+							<if>
+								<equals arg1="@{iter}" arg2="SC" casesensitive="false" />
+								<then>
+								<echo>[Master] Starting AM5728 VSB_VIP Coverity build</echo>				
+								<subant antfile="Cov_Build_VSB_VIP_5728.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+								<sleep seconds="5"/>
+								</then>
+								<else>
+								<echo>[Master] Starting AM4377 VSB_VIP Coverity build</echo>				
+								<subant antfile="Cov_Build_VSB_VIP_4377.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>
+								<sleep seconds="5"/>
+								</else>
+							</if>
+						</then>
+						<else>
+							<echo message="[Master] Skipping Coverity for VSB_VIP as VSB_VIP build input is given as OFF in build definition... " />
+						</else>
+						</if>
+						<if>
+							<equals arg1="${@{iter}_Coverity_Status}" arg2="FAIL" />
+						<then>
+							<!--<fail message="[Master] FAIL Coverity Build VSB VIP Failed for : @{iter}"></fail>-->
+						</then>
+						</if>
+					</try>
+					
+					<!--<catch>					
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+								
+						<fail message="[Master] FAIL Coverity Build VSB VIP Failed for : @{iter}"></fail>
+					</catch>-->
+				</trycatch>
+				
+				<sleep seconds="5"/>
+				
+				<trycatch>	
+					<!--Coverity for DKM-->
+					<try>
+						<if>
+							<equals arg1="${build_DKM}" arg2="ON" casesensitive="false" />
+						<then>
+							<echo>[Master] Starting @{iter} DKM Coverity build</echo>				
+							<subant antfile="Cov_Build_DKM_@{iter}.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+							<sleep seconds="5"/>
+						</then>
+						<else>
+							<echo message="[Master] Skipping @{iter} Coverity for DKM as DKM build input is given as OFF in build definition..." />
+						</else>
+						</if>
+						<if>
+							<equals arg1="${@{iter}_Coverity_Status}" arg2="FAIL" />
+						<then>
+							<!--<fail message="[Master] FAIL Coverity Build DKM Failed for : @{iter}"></fail>-->
+						</then>
+						</if>
+					</try>
+					
+					<!--<catch>
+						<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+							<entry  key="@{iter}_Coverity_Status" value="FAIL"/>
+						</propertyfile>	
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+								
+						<fail message="[Master] FAIL Coverity Build DKM Failed for : @{iter}"></fail>
+					</catch>-->
+				</trycatch>
+				
+				<sleep seconds="5"/>
+				
+				<trycatch>	
+					<!--Coverity for RTP-->
+					<try>
+						<if>
+							<equals arg1="${build_RTP}" arg2="ON" casesensitive="false" />
+						<then>
+							<echo>[Master] Starting @{iter} RTP Coverity build</echo>				
+							<subant antfile="Cov_Build_RTP_@{iter}.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+							<sleep seconds="5"/>
+						</then>
+						<else>
+							<echo message="[Master] Skipping @{iter} Coverity for RTP as RTP build input is given as OFF in build definition..." />
+						</else>
+						</if>
+						<!--<if>
+							<equals arg1="${@{iter}_Coverity_Status}" arg2="FAIL" />
+						<then>
+							<fail message="[Master] FAIL Coverity Build RTP Failed for : @{iter}"></fail>
+						</then>
+						</if>-->
+					</try>
+					
+					<!--<catch>
+						<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+							<entry  key="@{iter}_Coverity_Status" value="FAIL"/>
+						</propertyfile>	
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+								
+						<fail message="[Master] FAIL Coverity Build RTP Failed for : @{iter}"></fail>
+					</catch>-->
+				</trycatch>
+				
+				<sleep seconds="5"/>
+				
+				<trycatch>	
+					<!--Coverity for QT-->
+					<try>
+
+					</try>
+					
+					<!--<catch>
+						<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+							<entry  key="QT_Coverity_Status" value="FAIL"/>
+						</propertyfile>	
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+								
+						<fail message="[Master] FAIL Coverity Build for QT is Failed "></fail>
+					</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="@{iter}_Coverity_Build_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="@{iter}_Coverity_Build_Start_Time" value="${@{iter}_Coverity_Build_Start_Time}"/>
+					<entry  key="@{iter}_Coverity_Build_End_Time" value="${@{iter}_Coverity_Build_End_Time}"/>
+					</propertyfile> 
+				</finally>
+				</trycatch>
+			</sequential>
+		</for>		
+	</target>
+	
+	<target name="Cov_Build_QT">				
+				<trycatch>	
+					<!--Coverity for QT-->
+					<try>
+						<if>
+							<equals arg1="${build_QT}" arg2="ON" casesensitive="false" />
+						<then>
+							<echo>[Master] Starting QT for Coverity build</echo>				
+							<subant antfile="Cov_Build_QT.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+							<sleep seconds="5"/>
+						</then>
+						<else>
+							<echo message="[Master] Skipping Coverity for QT as QT build input is given as OFF in build definition..." />
+						</else>
+						</if>
+						<if>
+							<equals arg1="${QT_Coverity_Status}" arg2="FAIL" />
+						<then>
+							<!--<fail message="[Master] FAIL Coverity Build For QT is  Failed"></fail>-->
+						</then>
+						</if>
+					</try>
+				</trycatch>	
+	</target>
+	
+	<target name="Build_VSB_VIP_5728">						
+
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="SC_Build_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>
+				
+				<trycatch>				
+				<try>
+				
+					<echo>[Master] Starting VSB VIP Build for AM5728</echo>				
+					<subant antfile="Build_VSB_VIP_5728.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+					<sleep seconds="5"/>
+					
+					<if>
+						<equals arg1="${SC_Build_Status}" arg2="FAIL" />
+					<then>
+						<!--<fail message="[Master] ***Fail Build VSB VIP Failed for : AM5728"></fail>-->
+					</then>
+					</if>
+					
+				</try>
+							
+				<!--<catch>
+					<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="SC_Build_Status" value="FAIL"/>
+						<entry  key="SC_Build_Error_Description" value="Build Failed "/>
+					</propertyfile>	
+								
+					<antcall target="Test_Reporting">
+					</antcall>
+								
+					<fail message="[Master] ***Fail! Build VSB VIP Failed for : AM5728"></fail>
+				</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="SC_Build_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+					
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="SC_Build_Start_Time" value="${SC_Build_Start_Time}"/>	
+					<entry  key="SC_Build_End_Time" value="${SC_Build_End_Time}"/>
+					</propertyfile> 
+				</finally>
+		
+				</trycatch>	
+
+	</target>
+	
+	<target name="Build_VSB_VIP_4377">						
+
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="PC_Build_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					<format property="AC_Build_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>
+				
+				<trycatch>				
+				<try>				
+					<echo>[Master] Starting VSB VIP Build for AM377</echo>				
+					<subant antfile="Build_VSB_VIP_4377.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+					<sleep seconds="5"/>					
+				</try>
+							
+				<!--<catch>
+					<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="PC_Build_Status" value="FAIL"/>
+						<entry  key="PC_Build_Error_Description" value="Build Failed "/>
+						<entry  key="AC_Build_Status" value="FAIL"/>
+						<entry  key="AC_Build_Error_Description" value="Build Failed "/>
+					</propertyfile>	
+								
+					<antcall target="Test_Reporting">
+					</antcall>
+								
+					<fail message="[Master] ***Fail! Build VSB VIP Failed for : AM4377"></fail>
+				</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="PC_Build_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					<format property="AC_Build_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+					
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="PC_Build_Start_Time" value="${PC_Build_Start_Time}"/>	
+					<entry  key="PC_Build_End_Time" value="${PC_Build_End_Time}"/>
+					<entry  key="AC_Build_Start_Time" value="${AC_Build_Start_Time}"/>	
+					<entry  key="AC_Build_End_Time" value="${AC_Build_End_Time}"/>
+					</propertyfile> 
+				</finally>		
+				</trycatch>
+	</target>
+	
+	<target name="Build_DKM">
+	
+		<for list="${boardName}" delimiter="," param="iter">
+			<sequential>
+			
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="@{iter}_Build_DKM_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>			
+			
+				<trycatch>
+				
+				<try>
+				<echo>[Master] Starting DKM Build on board: @{iter}</echo>				
+				<subant antfile="Build_DKM_@{iter}.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+				<sleep seconds="5"/>	
+							
+				<if>
+					<equals arg1="${@{iter}_Build_Status}" arg2="FAIL" />
+					<then>
+					<!--<fail message="[Master] ***Fail Build DKM Failed for : @{iter}"></fail>-->
+					</then>
+				</if>
+				</try>
+							
+				<!--<catch>
+					<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="@{iter}_Build_Status" value="FAIL"/>
+						<entry  key="@{iter}_Build_Error_Description" value="Build Failed "/>
+					</propertyfile>	
+								
+					<antcall target="Test_Reporting">
+					</antcall>
+								
+					<fail message="[Master] ***Fail! Build DKM Failed for : @{iter}"></fail>
+				</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="@{iter}_Build_DKM_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="@{iter}_Build_DKM_Start_Time" value="${@{iter}_Build_DKM_Start_Time}"/>
+					<entry  key="@{iter}_Build_DKM_End_Time" value="${@{iter}_Build_DKM_End_Time}"/>
+					</propertyfile> 
+				</finally>		
+				</trycatch>						
+			</sequential>
+		</for>		
+	</target>	
+	
+	<target name="Build_RTP">
+	
+		<for list="${boardName}" delimiter="," param="iter">
+			<sequential>
+				
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="@{iter}_Build_RTP_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>			
+				
+				<trycatch>
+			
+				<try>
+				<echo>[Master] Starting RTP Build on board: @{iter}</echo>				
+				<subant antfile="Build_RTP_@{iter}.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+				<sleep seconds="5"/>	
+							
+				<if>
+					<equals arg1="${@{iter}_Build_Status}" arg2="FAIL" />
+					<then>
+						<!--<fail message="[Master] ***Fail Build RTP Failed for : @{iter}"></fail>-->
+					</then>
+				</if>
+				</try>
+							
+				<!--<catch>
+					<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="@{iter}_Build_Status" value="FAIL"/>
+						<entry  key="@{iter}_Build_Error_Description" value="Build Failed "/>
+					</propertyfile>	
+								
+					<antcall target="Test_Reporting">
+					</antcall>
+								
+					<fail message="[Master] ***Fail! Build RTP Failed for : @{iter}"></fail>
+				</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="@{iter}_Build_RTP_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="@{iter}_Build_RTP_Start_Time" value="${@{iter}_Build_RTP_Start_Time}"/>
+					<entry  key="@{iter}_Build_RTP_End_Time" value="${@{iter}_Build_RTP_End_Time}"/>
+					</propertyfile> 
+				</finally>		
+				</trycatch>						
+			</sequential>
+		</for>		
+	</target>
+	
+	<target name="Build_ROMFS">
+	
+		<for list="${boardName}" delimiter="," param="iter">
+			<sequential>
+				<!--Obtaining Timestamp of individual board's build start times-->
+				<tstamp>
+					<format property="@{iter}_Build_ROMFS_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>			
+				
+				<trycatch>
+			
+				<try>
+				<echo>[Master] Starting ROMFS Build on board: @{iter}</echo>				
+				<subant antfile="Build_ROMFS_@{iter}.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>				
+				<sleep seconds="5"/>	
+							
+				<if>
+					<equals arg1="${@{iter}_Build_Status}" arg2="FAIL" />
+					<then>
+					<!--<fail message="[Master] ***Fail Build ROMFS Failed for : @{iter}"></fail>-->
+					</then>
+				</if>
+				</try>
+							
+				<!--<catch>
+					<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="@{iter}_Build_Status" value="FAIL"/>
+						<entry  key="@{iter}_Build_Error_Description" value="Build ROMFS Failed "/>
+					</propertyfile>	
+								
+					<antcall target="Test_Reporting">
+					</antcall>
+								
+					<fail message="[Master] ***Fail! Build ROMFS Failed for : @{iter}"></fail>
+				</catch>-->
+							
+				<finally>
+					<!--Obtaining Timestamp of individual board's build end times-->
+					<tstamp>
+					<format property="@{iter}_Build_ROMFS_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+					<entry  key="@{iter}_Build_ROMFS_Start_Time" value="${@{iter}_Build_ROMFS_Start_Time}"/>
+					<entry  key="@{iter}_Build_ROMFS_End_Time" value="${@{iter}_Build_ROMFS_End_Time}"/>
+					</propertyfile> 
+				</finally>		
+				</trycatch>						
+			</sequential>
+		</for>		
+	</target>
+	
+	<target name="Build_QT">
+		
+		<echo>"[Master] Starting QT Build XML.."</echo>
+				
+				<!--Obtaining Timestamp for start times-->
+				<tstamp>
+					<format property="QT_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>
+				
+				<trycatch>
+					<try>
+						<subant antfile="Build_QT.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>					  
+					</try>
+							
+					<!--<catch>
+						<propertyfile file="${basedir}/Control.properties">
+							<entry  key="QT_Build_Status" value="FAIL"/>
+						</propertyfile>	
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+									
+						<fail message="[Master] QT_Build Failed due to errors"></fail>
+					</catch>-->
+							
+					<finally>
+					<!--Obtaining Timestamp for end times-->
+					<tstamp>
+						<format property="QT_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+						<entry  key="QT_Start_Time" value="${QT_Start_Time}"/>
+						<entry  key="QT_End_Time" value="${QT_End_Time}"/>
+					</propertyfile> 
+					</finally>							
+				</trycatch>	
+	</target>
+	
+	<target name="Flash">
+		<if>
+			<equals arg1="${flash}" arg2="ON" casesensitive="false"/>
+			<then>
+				<echo>"[Master] Starting Flash procedure..."</echo>
+				
+				<!--Obtaining Timestamp of individual board's flash start times-->
+				<tstamp>
+					<format property="Flash_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>
+				
+				<trycatch>
+					<try>
+						<subant antfile="Flash.xml" inheritAll="true" failonerror="false" buildpath="${basedir}/../Build_Flash_Files"/>					  
+					</try>
+							
+					<!--<catch>
+						<propertyfile file="${basedir}/Control.properties">
+							<entry  key="Flash_Status" value="FAIL"/>
+						</propertyfile>	
+								
+						<antcall target="Test_Reporting">
+						</antcall>
+									
+						<fail message="[Master] Flash Failed due to errors"></fail>
+					</catch>-->
+							
+					<finally>
+					<!--Obtaining Timestamp of individual board's flash end times-->
+					<tstamp>
+						<format property="Flash_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+					</tstamp>
+						
+					<!-- Writing Timestamp details into Control.properties -->
+					<propertyfile file="${basedir}/Control.properties">
+						<entry  key="Flash_Start_Time" value="${Flash_Start_Time}"/>
+						<entry  key="Flash_End_Time" value="${Flash_End_Time}"/>
+					</propertyfile> 
+					</finally>							
+				</trycatch>	
+			</then>
+			<else>
+				<echo>[Master] Skipping Flash as Flash input is OFF in build definition...</echo>
+			</else>
+		</if>
+	</target>
+	
+	<target name="Test">
+		<echo message="[Master] Inside test target" />
+		<tstamp>
+			<format property="Test_Execution_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+		</tstamp>
+		<trycatch>
+			<try>
+				<if>
+					<equals arg1="${testExecution}" arg2="ON" casesensitive="false" />
+					<then>
+						<property file="${basedir}/../../BAF_Utilities/config.ini"/>
+						<echo message="[Master] **********************************************************************************" />
+						<echo message="[Master] *******************************STARTING TEST EXECUTION****************************" />
+						<echo message="[Master] **********************************************************************************" />
+				
+						<!--Iterating through the contents of the list, which is seperated by the delimiter and navigating to a target for each iterant-->
+						<foreach list="${testExecRecordId}" param="terId" target = "TestSuiteAll" inheritall = "true" delimiter = ",">
+						</foreach>
+						
+						<sleep seconds="3"/>
+						<loadproperties srcFile="Control.properties"/>
+						<sleep seconds="2"/>
+						
+						<echo>[Master] Updating Control.Properties </echo>
+						<echo>[Master] ${Test_Exec_Status.set} </echo>
+						
+						<!--Checking if Test_Exec_Status property is set-->
+						<condition property="Test_Exec_Status.set" else="false">
+							<isset property="Test_Exec_Status"/>
+						</condition>
+						<if>
+							<equals arg1="${Test_Exec_Status.set}" arg2="true"/>
+							<then>
+								<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+									<entry  key="Test_Execution_Completed" value="ON"/>
+								</propertyfile>
+							</then>
+						</if>
+						
+						<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+							<entry  key="Test_Status" value="${Test_Exec_Status}"/>
+						</propertyfile>
+						<if>
+							<equals arg1="${Test_Exec_Status}" arg2="FAIL"/>
+							<then>
+								<fail/>
+							</then>
+						</if>
+					</then>
+					<else>
+						<echo message="[Master] Skipping Test Execution as Test Execution input is OFF in build definition ..." />
+					</else>
+				</if>
+			</try>
+			<!--<catch>
+				<echo message="[Master] ***Fail! A test case or test suite execution failed!!"/>
+				<antcall target="Test_Reporting">
+				</antcall>
+				<fail/>
+			</catch>-->
+			<finally>
+				<tstamp>
+					<format property="Test_Execution_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+				</tstamp>
+				<propertyfile file="${basedir}/Control.properties">
+					<entry  key="Test_Execution_Start_Time" value="${Test_Execution_Start_Time}"/>
+					<entry  key="Test_Execution_End_Time" value="${Test_Execution_End_Time}"/>
+				</propertyfile>
+			</finally>
+		</trycatch>
+	</target>
+
+	<target name = "TestSuiteAll" >
+		<!--Property to assign terId, obtained from the list testExecRecordId-->
+		<property name="testERId" value="${terId}" />
+		<echo message="[Master] STARTING EXECUTION OF TEST SUITE WITH TEST SUITE EXECUTION RECORD ID - ${testERId}" />
+		<subant antfile="rqmexectool.xml" inheritAll="true" failonerror="false" buildpath="${Next_Gen_Util_Path}/RQMExecutionTool/"/>
+		<echo message="[Master] #" />
+		<echo message="[Master] EXECUTION OF TEST SUITE WITH TEST SUITE EXECUTION RECORD ID ${testERId} WAS COMPLETED" />
+		<echo message="[Master] #" />
+	</target>	
+	
+	<target name="Build_Storage">
+		<trycatch>
+			<try>
+				<condition property="Images_exsist">
+					<or>
+						<available file="${basedir}\..\Build_Flash_Files\SC" type="dir"/>
+						<available file="${basedir}\..\Build_Flash_Files\PC" type="dir"/>
+						<available file="${basedir}\..\Build_Flash_Files\AC" type="dir"/>
+						<available file="${basedir}\..\Build_Flash_Files\UI" type="dir"/>
+					</or>
+				</condition>
+			<if>
+				<equals arg1="${Images_exsist}" arg2="true"/>							
+				<then>
+					<echo message="[Master] ###Sending a copy of all build images to Next_Gen_Builds Storage folder###... " />				
+					<mkdir dir="${StoragePath}\Build_Images_${TIMESTAMP}"/>
+					<exec executable="cmd" failonerror="false" >
+						<arg line="/c move /y ${basedir}\..\Build_Flash_Files\SC ${StoragePath}\Build_Images_${TIMESTAMP}"/>
+					</exec>
+					<exec executable="cmd" failonerror="false" >
+						<arg line="/c move /y ${basedir}\..\Build_Flash_Files\PC ${StoragePath}\Build_Images_${TIMESTAMP}"/>
+					</exec>
+					<exec executable="cmd" failonerror="false" >
+						<arg line="/c move /y ${basedir}\..\Build_Flash_Files\AC ${StoragePath}\Build_Images_${TIMESTAMP}"/>
+					</exec>
+					<exec executable="cmd" failonerror="false" >
+						<arg line="/c move /y ${basedir}\..\Build_Flash_Files\UI ${StoragePath}\Build_Images_${TIMESTAMP}"/>
+					</exec>						
+				</then>
+				<else>
+					<echo message="[Master] Skipping Build_Storage as Build Images folder SC/PC/AC not present in ${basedir}\..\Build_Flash_Files Folder ..." />
+				</else>
+			</if>
+			</try>
+			<!--<catch>
+				<antcall target="Test_Reporting">
+				</antcall>				
+				<fail message="[Master] ***Fail! Failed to copy build images from Build_Flash_Files Folder !!"></fail>			
+			</catch>-->
+		</trycatch>
+	</target>
+	
+	<target name="Test_Reporting">
+		<!--Obtaining TimeStamp at the beginning of Test Reporting-->
+		<tstamp>
+			<format property="Test_Reporting_Start_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+		</tstamp>
+		
+		<!--Writing Test Reporting Timestamp into Control.properties-->
+		<propertyfile file="${basedir}/Control.properties">
+			<entry  key="Test_Reporting_Start_Time" value="${Test_Reporting_Start_Time}"/>
+		</propertyfile>
+		
+		<available file="${basedir}/../../BAF_Utilities/Report.py"  property="Report.present"/>
+		
+		<condition property="Report.present" else="false">
+			<isset property="Report.present"/>
+		</condition>
+		
+		<echo message="[Master] Moving the RTC downloaded report.py file to BAF_Utilities folder" />
+		<if>
+			<equals arg1="${Report.present}" arg2="true"/>
+				<then>
+					<delete file="${basedir}/../../BAF_Utilities/Report.py"/>
+				</then>
+		</if>
+		
+		<copy file="Report.py" todir="${basedir}/../../BAF_Utilities"/>
+		
+		<!--Python code to perform Reporting-->		
+		<exec dir="${basedir}/../../BAF_Utilities" executable="cmd" failonerror="true" >
+			<arg line="/c python Report.py"/>
+		</exec>		
+	</target>
+	
+	<target name="Main_Target">
+	
+		<antcall target="Input_Validation">
+		</antcall>
+		
+		<antcall target="Delete_Previous_Support_File">
+		</antcall>
+					
+		<antcall target="Move_Source_File">
+		</antcall>
+
+		<antcall target="Move_Config_File">
+		</antcall>		
+		
+		<!--This is an target call for Coverity-->	
+		<if>
+			<equals arg1="${coverityBuild}" arg2="ON" casesensitive="false" />
+			<then>
+				<antcall target="Coverity_Build">
+				</antcall>
+			</then>
+			<else>
+				<echo message="[Master] Skipping Coverity as Coverity Build input is given as OFF in build definition... " />
+			</else>
+		</if>
+		
+		<!--This is an target call for QT Coverity-->	
+		<if>
+			<and>
+				<equals arg1="${coverityBuild}" arg2="ON" casesensitive="false"/>
+				<equals arg1="${build_QT}" arg2="ON" casesensitive="false"/>
+			</and>
+			<then>
+				<antcall target="Cov_Build_QT">
+				</antcall>
+			</then>
+			<else>
+				<echo message="[Master] Skipping QT Coverity as QT Build input is given as OFF in build definition... " />
+			</else>
+		</if>		
+		
+		<!--Target Call for BUILD: Switching as per user input in build definition for build parameters-->	
+		<if>
+			<equals arg1="${build}" arg2="ON" casesensitive="false" />
+			<then>
+				<if>
+					<equals arg1="${build_VSB_VIP}" arg2="ON" casesensitive="false" />
+					<then>
+						<if>
+							<contains string="${boardName}" substring="SC" casesensitive="false" />
+							<then>
+								<echo message="[Master] Starting VSB and VIP Build for AM5728 " />
+								<antcall target="Build_VSB_VIP_5728">
+								</antcall>								
+							</then>													
+						</if>
+						<condition property="AM4377">
+							<or>
+								<contains string="${boardName}" substring="PC" casesensitive="false" />
+								<contains string="${boardName}" substring="AC" casesensitive="false" />
+							</or>
+						</condition>
+						<if>
+							<equals arg1="${AM4377}" arg2="true"/>
+							<then>
+								<echo message="[Master] Starting VSB and VIP Build for AM4377 " />
+								<antcall target="Build_VSB_VIP_4377">
+								</antcall>	
+							</then>													
+						</if>
+					</then>
+				<else>
+					<echo message="[Master] Skipping VSB and VIP Build as build_VSB_VIP input is given as OFF in build definition " />
+				</else>
+				</if>
+				<if>
+					<equals arg1="${build_DKM}" arg2="ON" casesensitive="false" />
+					<then>
+						<antcall target="Build_DKM">
+						</antcall>
+					</then>
+				<else>
+					<echo message="[Master] Skipping DKM Build as build_DKM input is given as OFF in build definition " />
+				</else>
+				</if>
+				<if>
+					<equals arg1="${build_RTP}" arg2="ON" casesensitive="false" />
+					<then>
+						<antcall target="Build_RTP">
+						</antcall>
+					</then>
+				<else>
+					<echo message="[Master] Skipping RTP Build as build_RTP input is given as OFF in build definition " />
+				</else>
+				</if>
+			</then>
+		<else>
+			<echo message="[Master] Skipping Build as build input is given as OFF in build definition... " />
+		</else>
+		</if>
+		
+		<!--Building ROMFS whantfileen build is on in build definition and ROMFS_Status is on in config.ini file-->
+		<if>
+			<and>
+				<equals arg1="${build}" arg2="ON" casesensitive="false"/>
+				<equals arg1="${ROMFS_Status}" arg2="ON" casesensitive="false"/>
+			</and>
+		<then>
+			<echo message="[Master] Starting ROMFS Build " />
+			<antcall target="Build_ROMFS">
+			</antcall>
+		</then>
+		<else>
+			<echo message="[Master] Skipping ROMFS Build as build or ROMFS input is given as OFF either in build definition or in config.ini file " />
+		</else>
+		</if>
+		
+		<!--Building QT when QT build is on in build definition-->
+		<if>
+			<and>
+				<equals arg1="${build}" arg2="ON" casesensitive="false"/>
+				<equals arg1="${build_QT}" arg2="ON" casesensitive="false"/>
+			</and>
+		<then>
+			<echo message="[Master] Starting QT Build Target " />
+			<antcall target="Build_QT">
+			</antcall>
+		</then>
+		<else>
+			<echo message="[Master] Skipping QT Build as QT build input is given as OFF in build definition" />
+		</else>
+		</if>
+		
+		<!--Target call for Flash-->
+		<antcall target="Flash">
+		</antcall>
+		
+		<!--Target call for Test-->
+		<antcall target="Test">
+		</antcall>
+		
+		<!--Target call for Build Storage-->
+		<antcall target="Build_Storage">
+		</antcall>
+		
+		<!--Target call for Test Reporting-->
+		<antcall target="Test_Reporting">
+		</antcall>
+	</target>
+	
+	<!--Obtaining TimeStamp of Master End-->
+	<tstamp>
+		<format property="Master_End_Time" pattern="MM/dd/yyyy HH-mm-ss"  locale="en,UK"/>
+	</tstamp>
+	
+	<!--Writing Master Timestamp into Control.properties-->
+	<propertyfile file="${basedir}/Control.properties">
+		<entry  key="Master_End_Time" value="${Master_End_Time}"/>
+	</propertyfile> 
+	
+</project>

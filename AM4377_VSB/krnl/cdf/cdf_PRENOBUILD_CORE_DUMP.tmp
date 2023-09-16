@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/os/debug/coredump-1.1.0.7/cdf/02core_dump.cdf>
+
+Layer Layer::CORE_DUMP {
+	NAME CORE_DUMP
+}

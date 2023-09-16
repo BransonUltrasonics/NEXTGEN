@@ -1,0 +1,14 @@
+
+# this file is generated
+
+# layers that have been built in the VSB
+__BUILT_LAYERS += SDMMC_SDHC
+
+__OBJS_BUILT_SDMMC_SDHC = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslImxShdcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbPciSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbZynqSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslSdhcCtrl.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbSdhcCtrl.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslImxShdcCtrl.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbPciSdhcCtrl.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbZynqSdhcCtrl.d
+
+
+# built libraries
+__BUILT_LIBRARIES += krnl_ARMARCH7_common_sdhclib
+
+
+__OBJS_BUILT_krnl_ARMARCH7_common_sdhclib = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbFslImxShdcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbPciSdhcCtrl.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objsdhclib/vxbZynqSdhcCtrl.o 

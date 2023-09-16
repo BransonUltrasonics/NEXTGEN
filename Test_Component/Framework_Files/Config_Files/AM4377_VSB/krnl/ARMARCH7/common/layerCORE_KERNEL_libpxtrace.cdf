@@ -1,0 +1,38 @@
+ 
+/* this file is generated */
+
+Layer Layer::CORE_KERNEL {
+
+LIBRARIES += libpxtrace.a
+
+OBJECTS libpxtrace.a::pxTraceStreamBufferLib.o libpxtrace.a::pxTraceStreamLogLib.o libpxtrace.a::pxTraceStreamLib.o libpxtrace.a::pxTraceHashTblLib.o libpxtrace.a::pxTraceEventSetLib.o libpxtrace.a::pxTraceScLib.o
+
+}
+
+
+ObjectFile libpxtrace.a::pxTraceStreamBufferLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+ 
+ObjectFile libpxtrace.a::pxTraceStreamLogLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+ 
+ObjectFile libpxtrace.a::pxTraceStreamLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+ 
+ObjectFile libpxtrace.a::pxTraceHashTblLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+ 
+ObjectFile libpxtrace.a::pxTraceEventSetLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+ 
+ObjectFile libpxtrace.a::pxTraceScLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objpxtrace/
+}
+
+
+

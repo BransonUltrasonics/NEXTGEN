@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/ui/tilcon-7.0.0.1/demo-7.2.1.2/cdf/30TilconDemo.cdf>
+
+Layer Layer::TILCON_DEMO {
+	NAME TILCON_DEMO
+}

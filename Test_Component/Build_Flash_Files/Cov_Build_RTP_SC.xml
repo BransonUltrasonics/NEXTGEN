@@ -1,0 +1,277 @@
+<project basedir="." name="Cov_Build_RTP_SC" default="coverity_main">
+
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	<property file="${basedir}/../Framework_Files/Control.properties"/>
+	
+	<!--Navigating to Reference Workspace path -->
+	<property name="navReferenceWorspace" value="${VSB_VIP_WORKSPACE_PATH}"/>
+		
+	<!--RTP Project Name-->
+	<property name="rtpName" value="${SC_RTP_NAME}"/>
+	
+	<!--Reading coverity build path from Config.ini file-->
+	<property name = "Cov_Build_Path" value = "C:\\Program Files\\Coverity\\Coverity Static Analysis\\bin"/>
+
+	<!--path to store coverity result-->
+	<property name= "Cov_Build_RTP_SC_result_path" value="${basedir}\\..\\..\\Results_Next_Gen\\${TIMESTAMP}\\Coverity_Build_Result\\RTP_SC_Coverity_Build_Result_${TIMESTAMP}"/>
+	
+	<!--Delete previous source files in reference workspace -->
+	<target name = "Delete_Previous_Source_File">
+		<echo message="[Cov_Build_RTP_SC]Delete previous Source files if exist from reference workspace"/>
+		<available file="${navReferenceWorspace}\${SC_RTP_NAME}"  type="dir" property="Source.present"/>
+		<if>
+		<equals arg1="${Source.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<exec executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${SC_RTP_NAME}"/>
+			</exec>
+			<echo message="[Cov_Build_RTP_SC] Previous source files deleted successfully" />
+		</then>
+		</if>
+	</target>
+
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_File">
+		<echo message="[Cov_Build_RTP_SC]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${SC_RTP_NAME}" >
+			<fileset dir="${basedir}\..\${SC_RTP_NAME}" includes="**"/>  
+		</copy>
+	</target>	
+	
+	<!--Import Project for build -->
+	<target name = "Import_Project">
+		<echo message="[Cov_Build_RTP_SC]Importing RTP SC Project for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj import ${SC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Clean Project -->
+	<target name = "Clean_Project">
+		<echo message="[Cov_Build_RTP_SC]Clean RTP SC Project before build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj clean ${SC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Set Debug Mode Build-->
+	<target name = "Debug_Build">
+		<echo message="[Cov_Build_RTP_SC]Setting Debug mode for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj debugmode set on ${SC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<target name="coverity_build">
+		<trycatch>
+			<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+			<arg line="/c cov-build.exe --dir ${Cov_Build_RTP_SC_result_path} wrtool prj build ${navReferenceWorspace}\RTP_SC"/>
+			</exec>
+			</try>
+			<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="SC_Coverity_Status" value="FAIL"/>
+				<entry  key="SC_Coverity_Error_Description" value="SC RTP build command failed" />
+			</propertyfile>			
+			<fail>"[Cov_Build_RTP_SC] ***Fail! Coverity Build failed due to the SC RTP build command failure"</fail>
+			</catch>
+		</trycatch>
+		<!--Checking if the build log file is present or not -->
+		<available file="${Cov_Build_RTP_SC_result_path}\build-log.txt"  property="log.present"/>
+		<trycatch>
+			<try>
+				<if>
+					<equals arg1="${log.present}" arg2="true"/>
+				<then>
+					<echo>"[Cov_Build_RTP_SC]Build-log file is present at ${Cov_Build_RTP_SC_result_path} for RTP SC"</echo>
+				</then>
+				<else>
+				<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+					<entry  key="SC_Coverity_Status" value="FAIL"/>
+					<entry  key="SC_Coverity_Error_Description" value="Build-Log file not present"/>
+				</propertyfile>
+				<fail>"[Cov_Build_RTP_SC] ***Fail! Build-log is not present at ${Cov_Build_RTP_SC_result_path}"</fail>
+				</else>
+				</if>
+			</try>
+			<catch>
+
+			</catch>
+		</trycatch>
+	</target>
+	
+	<target name="coverity-analysis">
+	<echo>"[Cov_Build_RTP_SC]Performing coverity analysis for RTP SC Build "</echo>
+	<trycatch>
+		<try>
+		<!-- run the coverity analysis and get the summary of the log -->
+		<exec dir="${cov_build_path}" executable="cmd" failonerror="false" >
+			<arg line="/c cov-analyze.exe --dir ${Cov_Build_RTP_SC_result_path}"/>
+		</exec>
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="SC_Coverity_Status" value="FAIL"/>
+				<entry  key="SC_Coverity_Error_Description" value="coverity analyze command exit with error"/>
+			</propertyfile>
+			
+			<fail>"[Cov_Build_RTP_SC] ***Fail! coverity analyze command exit with error for SC  RTPBuild****"</fail>
+		</catch>
+	</trycatch>
+	<available file="${Cov_Build_RTP_SC_result_path}\output\analysis-log.txt"  property="analysislog.present"/>
+	<trycatch>
+		<try>
+		<if>
+		<equals arg1="${analysislog.present}" arg2="true"/>
+		<then>
+			<echo>"[Cov_Build_RTP_SC]Analysislog.txt is present at ${Cov_Build_RTP_SC_result_path}\output"</echo>
+		</then>
+		<else>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="SC_Coverity_Status" value="FAIL"/>
+				<entry  key="SC_Coverity_Error_Description" value="coverity analysis failed for RTP SC"/>
+			</propertyfile>
+		</else>
+		</if>
+		</try>
+		<catch>			
+			<fail>"[Cov_Build_RTP_SC] ***Fail! Analysislog.txt is not present at ${Cov_Build_RTP_SC_result_path}\output and coverity analysis failed for RTP SC build"</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	<target name="coverity-format">
+	<trycatch>
+		<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+				<arg line="/c cov-format-errors.exe --dir ${Cov_Build_RTP_SC_result_path}"/>
+			</exec>
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="SC_Coverity_Status" value="FAIL"/>
+				<entry  key="SC_Coverity_Error_Description" value="Coverity format command exit with error"/>
+			</propertyfile>
+			
+			<fail>"[Cov_Build_RTP_SC]***Fail! Coverity format command exit wth error "</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	<target name="coverity-error-count">
+	<trycatch>
+		<try>
+			<loadfile property="cov-analysis-log" srcfile="${Cov_Build_RTP_SC_result_path}\output\analysis-log.txt" /> 
+			<for param="line" delimiter="${line.separator}" list="${cov-analysis-log}">
+				<sequential>
+					<propertyregex property="defect_present" input="@{line}" regexp="Defect occurrences found\s*:\s*([0-9]+)" select="\1" casesensitive="false" />
+				</sequential>
+			</for>
+			<echo>"Coverity flag : ${coverityStopOnError} "</echo>
+			<echo>"defect count: ${defect_present}"</echo>
+			<condition property="defect_present" value="-1">
+				<isset property="defect_present"/>
+			</condition> 
+			<condition property="check">
+				<matches pattern="[1-9]" string="${defect_present}"/>
+			</condition>
+			<if>
+			<equals arg1="${check}" arg2="true"/>
+			<then>
+				<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+					<entry  key="SC_Coverity_Error_Description" value="SC_RTP ${defect_present} Defect count"/>
+					<entry  key="SC_Coverity_Status" value="PASS"/>
+				</propertyfile>
+				<if>
+				<equals arg1="${coverityStopOnError}" arg2="ON" casesensitive="false"/>
+					<then>
+						<fail> </fail>
+					</then>
+				</if>
+			</then>
+			<else>
+				<echo>"[Cov_Build_RTP_SC]Coverity Build passed for SC RTP Component"</echo>
+				<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="SC_Coverity_Status" value="PASS"/>
+				</propertyfile>
+			</else>
+			</if>
+			</try>
+			<catch>				
+				<fail message="[Cov_Build_RTP_SC] ***Fail! Coverity Build failed for @{iter}"></fail>
+			</catch>
+			
+		</trycatch>
+	</target>
+	
+	<target name="coverity-commit-defects">
+	<trycatch>
+		<try>
+			<exec dir="${cov_build_path}" executable="cmd" failonerror="true" >
+				<arg line="/c cov-commit-defects.exe --host buc-dan-sl01 --port 8080 --dir ${Cov_Build_RTP_SC_result_path} --user admin --password Orange56 --stream SC_RTP"/>
+			</exec>
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="SC_Coverity_Status" value="FAIL"/>
+				<entry  key="SC_Coverity_Error_Description" value="Coverity commit command exit with error"/>
+			</propertyfile>
+			
+			<fail>"[Cov_Build_RTP_SC] ***Fail! Coverity commit command exit with error for SC RTP Build****"</fail>
+		</catch>
+	</trycatch>
+	</target>
+	
+	
+	<target name="coverity_main">
+		<trycatch>
+			<try>
+				<antcall target="Delete_Previous_Source_File">
+				</antcall> 
+
+				<antcall target="Move_Source_File">
+				</antcall> 
+				
+				<antcall target="Import_Project">
+				</antcall>				
+				
+				<antcall target="Clean_Project">
+				</antcall>	
+				
+				<antcall target="Debug_Build">
+				</antcall>
+			
+				<antcall target="coverity_build">
+				</antcall>
+				
+				<antcall target="coverity-analysis">
+				</antcall>
+				
+				<antcall target="coverity-format">
+				</antcall>
+				
+				<antcall target="coverity-error-count">
+				</antcall>
+				
+				<antcall target="coverity-commit-defects">
+				</antcall>				
+			</try>			
+		</trycatch>
+	</target>
+</project>
+				

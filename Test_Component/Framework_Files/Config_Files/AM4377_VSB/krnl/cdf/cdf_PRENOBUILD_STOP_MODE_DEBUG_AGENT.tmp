@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/rttools/stopmode-2.0.4.2/cdf/01stopmode.cdf>
+
+Layer Layer::STOP_MODE_DEBUG_AGENT {
+	NAME STOP_MODE_DEBUG_AGENT
+}

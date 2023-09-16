@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--###################################################
+
+        BRANSON AUTOMATION FRAMEWORK - ULTRASONIC
+
+Filename:    Build_VSB_VIP_5728.xml
+Description: This file is an ANT script to build the VSB_VIP Project of Supervisor Controller
+Pre-condition: 1. All the required input to be given by control.properties
+		  2. set "WIND_LAYER_PATHS" TO BRANSON_DRV_LAYER Layer Path as an environment variable
+		  3. set "WIND_BSP_PATHS" TO Individual BSP’s Layer Path separated using semicolon as an environment variable
+		  4. set "WIND_WRTOOL_WORKSPACE" = C:\Branson_Automation\Build\
+		  5. add wrtool.bat path to the system path
+1. This file is invoked by Master.xml with appropriate properties
+2. WRtool is utilized to perform VSB and VIP build in VxWorks
+3. This file performs vsb and vip builds to generated VxWorks.bin
+4. The build types supported are quick build and clean build
+
+#####################################################-->
+<project basedir="." name="Build_VSB_VIP_5728" default="main">
+	
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	<property file="${basedir}/../Framework_Files/Control.properties"/>
+	
+	<!--Navigating to Workbench path-->
+	<property name = "navWorkbench" value = "${WORKBENCH_PATH}"/>
+	
+	<!--Provides the path of vxWorks.bin-->
+	<property name = "binaryPath" value = "${navWorkspace}\${vipName}\default"/> 
+	
+	<!--VSB Project Name-->
+	<property name = "vsbName" value = "${SC_VSB_NAME}"/>
+	
+	<!--VIP Project Name-->
+	<property name = "vipName" value = "${SC_VIP_NAME}"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>	
+	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Integration Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Branson Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_BRANSON_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Sasken Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_SASKEN_PATH}"/>
+	</then>
+	</if>
+
+	<target name="Delete_Previous_project">
+		<available file="${navReferenceWorspace}\${vipName}"  property="vip.present"/>
+		<available file="${navReferenceWorspace}\${vsbName}"  property="vsb.present"/>
+		<if>
+		<equals arg1="${vip.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<echo message="[Build_VSB_VIP_5728] Deleting the VIP project created during the previous build ..." />
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${SC_VIP_NAME}"/>
+			</exec>
+			<echo message="[Build_VSB_VIP_5728] VIP Project with the same name was deleted." />
+		</then>
+		</if>		
+		<if>
+		<equals arg1="${vsb.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<echo message="[Build_VSB_VIP_5728] Deleting the VSB project created during the previous build ..." />
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${SC_VSB_NAME}"/>
+			</exec>
+			<echo message="[Build_VSB_VIP_5728] VSB Project with the same name was deleted." />
+		</then>
+		</if>
+	</target>
+	
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_Files_VSB">
+		<echo message="[Build_VSB_VIP_5728]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${SC_VSB_NAME}" >
+			<fileset dir="${basedir}\..\${SC_VSB_NAME}" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_Files_VIP">
+		<echo message="[Build_VSB_VIP_5728]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${SC_VIP_NAME}" >
+			<fileset dir="${basedir}\..\${SC_VIP_NAME}" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Target to perform VSB Import-->
+	<target name="VSB_Import">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VSB Import****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj import ${SC_VSB_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VSB Clean  for Clean build-->
+	<target name="vsbClean">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VSB Clean****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj clean ${SC_VSB_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VSB Build-->
+	<target name="vsbBuild">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VSB Build****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj build ${SC_VSB_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform SYNC VSB-->
+	<target name="SYNC_VSB">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VSB SYNC****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="false" >
+				<arg line="/c wrtool.bat prj context update -vsb ${SC_VSB_NAME} -toolchain"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VIP Import-->
+	<target name="vip_import">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VIP Import****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj import ${SC_VIP_NAME}"/>
+		</exec>
+	</target>
+	
+	<!--Target to perform VIP Clean-->
+	<target name="vip_clean">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VIP Clean****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj clean ${SC_VIP_NAME}"/>
+		</exec>
+	</target>
+
+	<!--Target to perform VIP open-->
+	<target name="vip_open">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VIP open****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="false">
+				<arg line="/c wrtool.bat prj open ${SC_VIP_NAME}"/>
+		</exec>
+	</target>		
+	
+	<!--Target to perform VIP Build-->
+	<target name="vipBuild">
+		<echo message="[Build_VSB_VIP_5728] ****Performing VIP Build****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj build ${SC_VIP_NAME}"/>
+		</exec>
+		<available file="${navReferenceWorspace}\${vipName}\default\vxWorks.bin"  property="binary.present"/>
+		<if>
+			<equals arg1="${binary.present}" arg2="true" />
+			<then>
+				<echo message="[Build_VSB_VIP_5728] VIP build successfully"/>
+				<echo message="[Build_VSB_VIP_5728] Moving the binaries to alternative folder"/>
+				<copy todir="${basedir}\SC" file="${navReferenceWorspace}\${vipName}\default\vxWorks.bin"/>
+			</then>
+		<elseif>
+			<equals arg1="${binary.present}" arg2="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}control.properties">
+					<entry  key="SC_Build_Status" value="FAIL"/>
+					<entry  key="SC_Build_Error_Description" value="VxWorks.bin was not found in the given path"/>
+				</propertyfile>
+				<fail message="VIP Build Terminated with Errors."/>
+			</then>
+		</elseif>
+		</if>
+	</target>
+	
+	<target name="main">
+		<trycatch>
+			<try>				
+				<antcall target="Delete_Previous_project">
+				</antcall>
+				
+				<antcall target="Move_Source_Files_VSB">
+				</antcall>
+				
+				<antcall target="Move_Source_Files_VIP">
+				</antcall>
+				
+				<antcall target="VSB_Import">
+				</antcall>
+				
+				<antcall target="vsbClean">
+				</antcall>
+				
+				<sleep seconds="5"/> 
+				
+				<antcall target="vsbBuild">
+				</antcall>
+				
+				<antcall target="SYNC_VSB">
+				</antcall>
+				
+				<sleep seconds="5"/> 
+				
+				<antcall target="vip_import">
+				</antcall>
+				
+				<antcall target="vip_clean">
+				</antcall>
+				
+				<antcall target="vip_open">
+				</antcall>
+				
+				<!--<antcall target="vipBuild">		
+				</antcall>-->
+				
+				<echo message="[Build_VSB_VIP_5728] VSB and VIP build successfully" />
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="SC_Build_Status" value="PASS"/>				
+				</propertyfile>
+			</try>		
+		<catch>
+			<echo message="[Build_VSB_VIP_5728] An exception occured during VSB and VIP build" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="SC_Build_Status" value="FAIL"/>
+				<entry  key="SC_Build_Error_Description" value="An exception occured during VSB and VIP build"/>
+			</propertyfile>
+			<fail message="[Build_VSB_VIP_5728] Build Terminated with Errors."/>
+		</catch>
+	</trycatch>	
+	</target>
+</project>

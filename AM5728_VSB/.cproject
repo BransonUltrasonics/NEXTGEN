@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<buildSystem id="ARM Diab">
+			<storageModule id="ARM Diab" moduleId="org.eclipse.cdt.core.settings"/>
+		</buildSystem>
+		<buildSystem id="ARM GNU">
+			<storageModule id="ARM GNU" moduleId="org.eclipse.cdt.core.settings"/>
+		</buildSystem>
+		<cconfiguration id="ARM Diab">
+			<storageModule id="ARM Diab" moduleId="defaultConfigurationDataProvider" name="ARM Diab">
+				<sourceEntries/>
+				<folderData id="ARM Diab.1487834457" name="" path="">
+					<languageData contentTypeIds="org.eclipse.cdt.core.cSource;org.eclipse.cdt.core.cHeader" id="ARM Diab.1487834457.1286173088" languageId="com.windriver.diab.c" name="Wind River Diab C" supportedEntryKinds="includePath;includeFile;macro;macroFile">
+						<settingEntries/>
+					</languageData>
+					<languageData contentTypeIds="org.eclipse.cdt.core.cxxSource;org.eclipse.cdt.core.cxxHeader" id="ARM Diab.1487834457.1831339387" languageId="com.windriver.diab.cpp" name="Wind River Diab C++" supportedEntryKinds="includePath;includeFile;macro;macroFile">
+						<settingEntries/>
+					</languageData>
+				</folderData>
+				<buildData id="ARM Diab.244064209"/>
+				<targetPlatformData binaryParsers="com.windriver.ide.core.WRElfParserVxWorks;org.eclipse.cdt.core.GNU_ELF" id="ARM Diab.724562044"/>
+			</storageModule>
+			<storageModule buildSystemId="com.windriver.cdt.core.WRDiabCfgDataProvider" id="ARM Diab" moduleId="org.eclipse.cdt.core.settings" name="ARM Diab">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.windriver.ide.core.WRElfParserVxWorks" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+		<cconfiguration id="ARM GNU">
+			<storageModule id="ARM GNU" moduleId="defaultConfigurationDataProvider" name="ARM GNU">
+				<sourceEntries/>
+				<folderData id="ARM GNU.1363415015" name="" path="">
+					<languageData contentTypeIds="org.eclipse.cdt.core.cSource;org.eclipse.cdt.core.cHeader" id="ARM GNU.1363415015.1671227627" languageId="com.windriver.cdt.core.wrGnuC" name="Wind River GNU C" supportedEntryKinds="includePath;includeFile;macro;macroFile">
+						<settingEntries/>
+					</languageData>
+					<languageData contentTypeIds="org.eclipse.cdt.core.cxxSource;org.eclipse.cdt.core.cxxHeader" id="ARM GNU.1363415015.1087108713" languageId="com.windriver.cdt.core.wrGnuCpp" name="Wind River GNU C++" supportedEntryKinds="includePath;includeFile;macro;macroFile">
+						<settingEntries/>
+					</languageData>
+				</folderData>
+				<buildData id="ARM GNU.2134736898"/>
+				<targetPlatformData binaryParsers="com.windriver.ide.core.WRElfParserVxWorks;org.eclipse.cdt.core.GNU_ELF" id="ARM GNU.2003938950"/>
+			</storageModule>
+			<storageModule buildSystemId="com.windriver.cdt.core.WRGnuCfgDataProvider" id="ARM GNU" moduleId="org.eclipse.cdt.core.settings" name="ARM GNU">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.windriver.ide.core.WRElfParserVxWorks" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+</cproject>

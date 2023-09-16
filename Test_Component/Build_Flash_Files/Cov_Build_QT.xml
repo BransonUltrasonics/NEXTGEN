@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<!-- 
+#######################################################################################
+        BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics 
+
+Filename:    Cov_Build_QT.xml
+Description: This file is for Coverity Build for QT using command line.
+			 
+Steps:-
+1. Generate make file using the qmake.exe
+2. Do a Coverity clean using cov-build.exe and compiler mingw32-make.exe
+3. Do a Coverity build using cov-build.exe and compiler mingw32-make.exe
+4. Do coverity analysis, coverity format and coverity commit defects 
+########################################################################################-->
+<project basedir="." name="Cov_Build_QT" default="mainTarget">
+	
+	<!--Navigates to antContrib path-->
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>	
+	
+	<!--Reading QMake path from Config.ini file-->
+	<property name = "QMake_Path" value = "${QT_QMAKE_PATH}"/>
+	
+	<!--Reading QMake path from Config.ini file-->
+	<property name = "Stream_Name" value = "${Stream_Name_QT}"/>	
+	
+	<!--Reading Compiler path from Config.ini file-->
+	<property name = "Compiler_Path" value = "${QT_COMPILER_PATH}"/>
+
+	<!--Reading coverity build path from Config.ini file-->
+	<property name = "cov_build_path_QT" value = "${cov_build_path_QT}"/>
+	
+	<!--Reading coverity build path from Config.ini file-->
+	<property name = "Make_File_Path" value = "${basedir}\\..\\QT_UIController\\Sources"/>
+
+	<!--Reading coverity build path from Config.ini file-->
+	<property name = "Cov_Result_Path" value = "${basedir}\\..\\..\\Results_Next_Gen\\${TIMESTAMP}\\Coverity_Build_Result\\QT_UI_Coverity_Build_Result_${TIMESTAMP}"/>	
+
+	<!--Target to generate make file -->
+	<target name = "Generate_Make_File">
+		<echo message="[QT_Cov_Build]Generating make file using Qmake before build"/>
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+				<arg value ="/c"/>
+				<arg Value="${QMake_Path}\qmake.exe -o MakeFile ${basedir}\..\QT_UIController\Sources\UIController.pro -spec win32-g++" />
+			</exec>
+	</target>	
+	
+	<!--Target to do clean before build-->
+	<target name = "Cov_Clean">
+		<echo message="[QT_Cov_Build] Running Coverity Clean for QT "/>
+		<exec dir = "${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+			<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+			<arg value ="/c"/>
+			<arg value ="${cov_build_path_QT}\cov-build.exe --dir ${Cov_Result_Path} ${Compiler_Path}\mingw32-make.exe -f ${Make_File_Path}\\makefile clean"/>
+		</exec>	
+	</target>	
+	
+	<!--Target to do Coverity QT Build -->
+	<target name = "Cov_Build">
+		<echo message="[QT_Cov_Build]Running Coverity Build for QT"/>		
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+				<arg value ="/c"/>
+				<arg Value="${cov_build_path_QT}\cov-build.exe --dir ${Cov_Result_Path} ${Compiler_Path}\mingw32-make.exe -j 8 -f ${Make_File_Path}\\makefile debug" />
+			</exec>
+	</target>
+	
+	<!--Target to do Coverity analysis -->
+	<target name = "Cov_Analysis">
+		<echo message="[QT_Cov_Build]Running Coverity Analysis for QT"/>		
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<arg value ="/c"/>
+				<arg Value="${cov_build_path_QT}\cov-analyze.exe --dir ${Cov_Result_Path} " />
+			</exec>
+	</target>
+	
+	<!--Target to do Coverity Format -->
+	<target name = "Cov_Format">
+		<echo message="[QT_Cov_Build]Running Coverity Format for QT"/>		
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<arg value ="/c"/>
+				<arg Value="${cov_build_path_QT}\cov-format-errors.exe --dir ${Cov_Result_Path} " />
+			</exec>
+	</target>
+	
+	<!--Target to do Coverity Error counts -->
+	<target name = "Cov_Error_Count">
+		<trycatch>
+		<try>		
+			<loadfile property="cov-analysis-log" srcfile="${Cov_Result_Path}\output\analysis-log.txt" /> 
+			<for param="line" delimiter="${line.separator}" list="${cov-analysis-log}">
+				<sequential>
+					<propertyregex property="defect_present" input="@{line}" regexp="Defect occurrences found\s*:\s*([0-9]+)" select="\1" casesensitive="false" />
+				</sequential>
+			</for>
+			<echo>"Coverity flag : ${coverityStopOnError} "</echo>
+			<echo>"defect count: ${defect_present}"</echo>
+			<condition property="defect_present" value="-1">
+				<isset property="defect_present"/>
+			</condition> 
+			<condition property="check">
+				<matches pattern="[1-9]" string="${defect_present}"/>
+			</condition>
+			<if>
+			<equals arg1="${check}" arg2="true"/>
+			<then>
+				<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+					<entry  key="QT_Coverity_Error_Description" value="${defect_present} Defect count"/>
+					<entry  key="QT_Coverity_Status" value="PASS"/>
+				</propertyfile>
+				<if>
+				<equals arg1="${coverityStopOnError}" arg2="ON" casesensitive="false"/>
+					<then>
+						<fail> </fail>
+					</then>
+				</if>
+			</then>
+			<else>
+				<echo>"[QT_Cov_Build]Coverity Build passed for QT UI Controller"</echo>
+				<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+						<entry  key="QT_Coverity_Status" value="PASS"/>
+				</propertyfile>
+			</else>
+			</if>
+			</try>
+			<catch>				
+				<fail message="[QT_Cov_Build] ***Fail! Coverity Build failed for QT"></fail>
+			</catch>			
+		</trycatch>
+	</target>
+	
+	<!--Target to do Coverity commit defects -->
+	<target name = "Cov_Commit_Defects">
+		<echo message="[QT_Cov_Build]Running Coverity commit defects for QT"/>		
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<arg path ="${cov_build_path_QT}\cov-commit-defects.exe --host buc-dan-sl01 --port 8080 --dir ${Cov_Result_Path} --user admin --password Orange56 --stream UI Controller"/>
+			</exec>
+	</target>
+
+
+	<!--Main Target which invokes all sub target-->
+	<target name="mainTarget">
+	<trycatch>
+		<try>		
+			<echo message="[QT_Cov_Build]Starting QT Build"/>
+			
+			<antcall target="Generate_Make_File">
+			</antcall>
+			
+			<antcall target="Cov_Clean">
+			</antcall>
+		
+			<antcall target="Cov_Build">
+			</antcall>			
+	
+			<antcall target="Cov_Analysis">
+			</antcall>
+			
+			<antcall target="Cov_Format">
+			</antcall>
+			
+			<antcall target="Cov_Error_Count">
+			</antcall>
+			
+			<antcall target="Cov_Commit_Defects">
+			</antcall>
+			
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="QT_Coverity_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[QT_Cov_Build] Coverity QT Build Terminated with Errors."/>
+		</catch>
+	</trycatch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="QT_Coverity_Status" value="PASS"/>
+			</propertyfile>
+			<echo message="[QT_Cov_Build] Coverity QT Build Completed Successfully."/>
+	</target>	
+</project>

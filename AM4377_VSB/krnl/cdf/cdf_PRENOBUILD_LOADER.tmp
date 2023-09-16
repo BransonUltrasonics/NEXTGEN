@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/os/utils/loader-1.1.2.0/cdf/01loader.cdf>
+
+Layer Layer::LOADER {
+	NAME LOADER
+}

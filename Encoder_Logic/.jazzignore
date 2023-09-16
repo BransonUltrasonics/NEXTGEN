@@ -1,0 +1,208 @@
+### Jazz Ignore 0
+# Ignored files and folders will not be committed, but may be modified during 
+# accept or update.  
+# - Ignore properties should contain a space separated list of filename patterns.  
+# - Each pattern is case sensitive and surrounded by braces ('{' and '}').  
+# - "*" matches zero or more characters.  
+# - "?" matches a single character.  
+# - The pattern list may be split across lines by ending the line with a 
+#     backslash and starting the next line with a tab.  
+# - Patterns in core.ignore prevent matching resources in the same 
+#     directory from being committed.  
+# - Patterns in core.ignore.recursive matching resources in the current 
+#     directory and all subdirectories from being committed.  
+# - The default value of core.ignore.recursive is *.class 
+# - The default value for core.ignore is bin 
+# 
+# To ignore shell scripts and hidden files in this subtree: 
+#     e.g: core.ignore.recursive = {*.sh} {\.*} 
+# 
+# To ignore resources named 'bin' in the current directory (but allow 
+#  them in any sub directorybelow): 
+#     e.g: core.ignore = {bin} 
+# 
+# NOTE: modifying ignore files will not change the ignore status of 
+#     Eclipse derived resources.
+
+core.ignore.recursive= \
+	{*.class} 
+
+core.ignore= \
+	{AC.bin} \
+	{AC.elf} \
+	{AC.hex} \
+	{AC.map} \
+	{ADCTest_c_ut.bin} \
+	{ADCTest_c_ut.elf} \
+	{ADCTest_c_ut.hex} \
+	{ADCTest_c_ut.map} \
+	{CrossMonitoring_c_ut.bin} \
+	{CrossMonitoring_c_ut.elf} \
+	{CrossMonitoring_c_ut.hex} \
+	{CrossMonitoring_c_ut.map} \
+	{DeviceDiagnostics_c_ut.bin} \
+	{DeviceDiagnostics_c_ut.elf} \
+	{DeviceDiagnostics_c_ut.hex} \
+	{DeviceDiagnostics_c_ut.map} \
+	{DriveDiagnostics_c_ut.bin} \
+	{DriveDiagnostics_c_ut.elf} \
+	{DriveDiagnostics_c_ut.hex} \
+	{DriveDiagnostics_c_ut.map} \
+	{EStopDiagnostics_c_ut.bin} \
+	{EStopDiagnostics_c_ut.elf} \
+	{EStopDiagnostics_c_ut.hex} \
+	{EStopDiagnostics_c_ut.map} \
+	{En13849_c_int.bin} \
+	{En13849_c_int.elf} \
+	{En13849_c_int.hex} \
+	{En13849_c_int.map} \
+	{FlashTest_c_ut.bin} \
+	{FlashTest_c_ut.elf} \
+	{FlashTest_c_ut.hex} \
+	{FlashTest_c_ut.map} \
+	{IOInit_c_ut.bin} \
+	{IOInit_c_ut.elf} \
+	{IOInit_c_ut.hex} \
+	{IOInit_c_ut.map} \
+	{Input_c_ut.bin} \
+	{Input_c_ut.elf} \
+	{Input_c_ut.hex} \
+	{Input_c_ut.map} \
+	{IntegrationStep10_CpuStuck_c_int.bin} \
+	{IntegrationStep10_CpuStuck_c_int.elf} \
+	{IntegrationStep10_CpuStuck_c_int.hex} \
+	{IntegrationStep10_CpuStuck_c_int.map} \
+	{IntegrationStep10_c_int.bin} \
+	{IntegrationStep10_c_int.elf} \
+	{IntegrationStep10_c_int.hex} \
+	{IntegrationStep10_c_int.map} \
+	{IntegrationStep1_c_int.bin} \
+	{IntegrationStep1_c_int.elf} \
+	{IntegrationStep1_c_int.hex} \
+	{IntegrationStep1_c_int.map} \
+	{IntegrationStep2_c_int.bin} \
+	{IntegrationStep2_c_int.elf} \
+	{IntegrationStep2_c_int.hex} \
+	{IntegrationStep2_c_int.map} \
+	{IntegrationStep3_c_int.bin} \
+	{IntegrationStep3_c_int.elf} \
+	{IntegrationStep3_c_int.hex} \
+	{IntegrationStep3_c_int.map} \
+	{IntegrationStep4_c_int.bin} \
+	{IntegrationStep4_c_int.elf} \
+	{IntegrationStep4_c_int.hex} \
+	{IntegrationStep4_c_int.map} \
+	{IntegrationStep5_c_int.bin} \
+	{IntegrationStep5_c_int.elf} \
+	{IntegrationStep5_c_int.hex} \
+	{IntegrationStep5_c_int.map} \
+	{IntegrationStep6_c_int.bin} \
+	{IntegrationStep6_c_int.elf} \
+	{IntegrationStep6_c_int.hex} \
+	{IntegrationStep6_c_int.map} \
+	{IntegrationStep7_c_int.bin} \
+	{IntegrationStep7_c_int.elf} \
+	{IntegrationStep7_c_int.hex} \
+	{IntegrationStep7_c_int.map} \
+	{IntegrationStep8_c_int.bin} \
+	{IntegrationStep8_c_int.elf} \
+	{IntegrationStep8_c_int.hex} \
+	{IntegrationStep8_c_int.map} \
+	{IntegrationStep9_c_int.bin} \
+	{IntegrationStep9_c_int.elf} \
+	{IntegrationStep9_c_int.hex} \
+	{IntegrationStep9_c_int.map} \
+	{InterruptTest_c_ut.bin} \
+	{InterruptTest_c_ut.elf} \
+	{InterruptTest_c_ut.hex} \
+	{InterruptTest_c_ut.map} \
+	{LUTest_c_ut.bin} \
+	{LUTest_c_ut.elf} \
+	{LUTest_c_ut.hex} \
+	{LUTest_c_ut.map} \
+	{PBDiagnostics_c_ut.bin} \
+	{PBDiagnostics_c_ut.elf} \
+	{PBDiagnostics_c_ut.hex} \
+	{PBDiagnostics_c_ut.map} \
+	{PartContact_c_ut.bin} \
+	{PartContact_c_ut.elf} \
+	{PartContact_c_ut.hex} \
+	{PartContact_c_ut.map} \
+	{ProgramCounterTest_c_ut.bin} \
+	{ProgramCounterTest_c_ut.elf} \
+	{ProgramCounterTest_c_ut.hex} \
+	{ProgramCounterTest_c_ut.map} \
+	{QEI_c_ut.bin} \
+	{QEI_c_ut.elf} \
+	{QEI_c_ut.hex} \
+	{QEI_c_ut.map} \
+	{RTC_c_ut.bin} \
+	{RTC_c_ut.elf} \
+	{RTC_c_ut.hex} \
+	{RTC_c_ut.map} \
+	{RamTest_c_ut.bin} \
+	{RamTest_c_ut.elf} \
+	{RamTest_c_ut.hex} \
+	{RamTest_c_ut.map} \
+	{RegTest_s_ut.bin} \
+	{RegTest_s_ut.elf} \
+	{RegTest_s_ut.hex} \
+	{RegTest_s_ut.map} \
+	{SBeamDiagnostics_c_ut.bin} \
+	{SBeamDiagnostics_c_ut.elf} \
+	{SBeamDiagnostics_c_ut.hex} \
+	{SBeamDiagnostics_c_ut.map} \
+	{SSP_c_ut.bin} \
+	{SSP_c_ut.elf} \
+	{SSP_c_ut.hex} \
+	{SSP_c_ut.map} \
+	{SVRelayDiagnostics_c_ut.hex} \
+	{Serial_c_ut.bin} \
+	{Serial_c_ut.elf} \
+	{Serial_c_ut.hex} \
+	{Serial_c_ut.map} \
+	{SetOutputs_c_ut.bin} \
+	{SetOutputs_c_ut.elf} \
+	{SetOutputs_c_ut.hex} \
+	{SetOutputs_c_ut.map} \
+	{SonicsEnableDiagnostics_c_ut.bin} \
+	{SonicsEnableDiagnostics_c_ut.elf} \
+	{SonicsEnableDiagnostics_c_ut.hex} \
+	{SonicsEnableDiagnostics_c_ut.map} \
+	{StateMachineEntryFunc_c_ut.bin} \
+	{StateMachineEntryFunc_c_ut.elf} \
+	{StateMachineEntryFunc_c_ut.hex} \
+	{StateMachineEntryFunc_c_ut.map} \
+	{StateMachineExitFunc_c_ut.bin} \
+	{StateMachineExitFunc_c_ut.elf} \
+	{StateMachineExitFunc_c_ut.hex} \
+	{StateMachineExitFunc_c_ut.map} \
+	{StateMachine_c_ut.bin} \
+	{StateMachine_c_ut.elf} \
+	{StateMachine_c_ut.hex} \
+	{StateMachine_c_ut.map} \
+	{SystemInitialization_c_ut.bin} \
+	{SystemInitialization_c_ut.elf} \
+	{SystemInitialization_c_ut.hex} \
+	{TRSDiagnostics_c_ut.bin} \
+	{TRSDiagnostics_c_ut.elf} \
+	{TRSDiagnostics_c_ut.hex} \
+	{TRSDiagnostics_c_ut.map} \
+	{TestWD_c_ut.bin} \
+	{TestWD_c_ut.elf} \
+	{TestWD_c_ut.hex} \
+	{TestWD_c_ut.map} \
+	{TwoHandOperation_c_ut.bin} \
+	{TwoHandOperation_c_ut.elf} \
+	{TwoHandOperation_c_ut.hex} \
+	{TwoHandOperation_c_ut.map} \
+	{UFail24VDiagnostics_c_ut.bin} \
+	{UFail24VDiagnostics_c_ut.elf} \
+	{UFail24VDiagnostics_c_ut.hex} \
+	{UFail24VDiagnostics_c_ut.map} \
+	{ULSLEDiagnostics_c_ut.bin} \
+	{ULSLEDiagnostics_c_ut.elf} \
+	{ULSLEDiagnostics_c_ut.hex} \
+	{ULSLEDiagnostics_c_ut.map} \
+	{bin} \
+	{obj} 

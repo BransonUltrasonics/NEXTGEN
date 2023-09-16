@@ -1,0 +1,227 @@
+<!-- 
+#######################################################################################
+        BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics
+		
+Filename:    Build_DKM_PC.xml
+Description: This file is to Build DKM PC using command line.
+			 
+Steps:-
+1. Move Source files from load directory to reference workspace
+2. Import project using wrtool command
+3. Do clean project and set build type as debug or release based on build definition.
+4. Build DKM Project using wrtool command.  
+########################################################################################-->
+<project basedir="." name="Build_DKM_PC" default="Main_Target">
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!--Getting current Timestamp for creation all folders and log files-->
+	<tstamp>
+		<format property="TIMESTAMP" pattern="yyyyMMdd_HHmmss"  locale="en,UK"/>
+		<format property="" pattern="yyyyMMdd"  locale="en,UK" />
+	</tstamp>	
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	
+	<!--DKM Project Name-->
+	<property name="dkmName" value="${PC_DKM_NAME}"/>
+
+	<!--Set Workspace path based on stream name -->
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Integration Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Branson Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_BRANSON_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Sasken Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_SASKEN_PATH}"/>
+	</then>
+	</if>
+
+	<!--Delete previous source files in reference workspace -->
+	<target name = "Delete_Previous_Source_File">
+		<echo message="[Build_DKM_PC]Delete previous Source files if exist from reference workspace"/>
+		<available file="${navReferenceWorspace}\${PC_DKM_NAME}"  type="dir" property="Source.present"/>
+		<if>
+		<equals arg1="${Source.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<exec executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${PC_DKM_NAME}"/>
+			</exec>
+			<echo message="[Build_DKM_PC] Previous source files deleted successfully" />
+		</then>
+		</if>
+	</target>
+
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_File">
+		<echo message="[Build_DKM_PC]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${PC_DKM_NAME}" >
+			<fileset dir="${basedir}\..\${PC_DKM_NAME}" includes="**"/>  
+		</copy>
+	</target>	
+	
+	<!--Import Project for build -->
+	<target name = "Import_Project">
+		<echo message="[Build_DKM_PC]Importing DKM PC Project for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj import ${PC_DKM_NAME}"/>
+			</exec>
+	</target>
+	
+	<!-- target to set the below flag in Build setting of DKM project -->
+	<target name="DKM_build_setflag">
+		<trycatch>
+			<try>
+			<echo message="[Build_DKM_PC] ****Performing PC_DKM_Build_Properties_setFlag****" />
+			<exec dir="${navReferenceWorspace}\${PC_DKM_NAME}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj define add -DPOWER_CONTROLLER_BUILD"/>
+			</exec>
+			<echo message="[Build_DKM_PC] ****Performing PC_DKM_Build_Properties_Remove Flag AC****" />
+			<exec dir="${navReferenceWorspace}\${PC_DKM_NAME}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj define remove -DACTUATION_CONTROLLER_BUILD"/>
+			</exec>
+			</try>
+			<catch>
+			<echo message="[Build_DKM_PC] ****DKM build setting the flag parameter failed***" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Build_Status" value="FAIL"/>
+				<entry  key="PC_Error_Description" value="DKM build setting the flag parameter failed"/>
+			</propertyfile>
+			<fail message="[Build_DKM_PC]Failed during setting the Build parameter"/>
+			</catch>
+		</trycatch>
+	</target>
+	
+	<!--Clean Project -->
+	<target name = "Clean_Project">
+		<echo message="[Build_DKM_PC]Clean DKM PC Project before build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj clean ${PC_DKM_NAME}"/>
+			</exec>
+	</target>
+
+	<!--Set RELEASE Mode Build-->
+	<target name = "Release_Build">
+		<echo message="[Build_DKM_PC]Setting Release mode for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj debugmode set off ${PC_DKM_NAME}"/>
+			</exec>
+	</target>	
+	
+	<!--Set Debug Mode Build-->
+	<target name = "Debug_Build">
+		<echo message="[Build_DKM_PC]Setting Debug mode for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj debugmode set on ${PC_DKM_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Build DKM Project -->
+	<target name = "Build_DKM">
+		<echo message="[Build_DKM_PC]Building DKM PC Project"/>
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj build ${PC_DKM_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Target to check and copy DKM Image-->
+	<target name = "Check_Image_And_Copy">
+		<available file="${Image_Path}\${PC_DKM_NAME}.out"  property="Image_File.present"/>
+		<if>
+			<equals arg1="${Image_File.present}" arg2="true" />
+			<then>
+				<echo>[Build_DKM_PC] DKM Image found in build path </echo>
+				<echo message="[Build_DKM_PC] Moving the Image binary to alternative folder"/>
+				<copy todir="${basedir}\..\Build_Flash_Files\PC" file="${Image_Path}\${PC_DKM_NAME}.out"/>
+			</then>
+		<else>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[Build_DKM_PC] DKM out file not found in build path."/>
+		</else>
+		</if>
+	</target>		
+	
+	 <target name ="Main_Target" >
+	 <trycatch>
+			<try>			
+			<echo message="[Build_DKM_PC]Starting Build DKM PC"/>
+			
+				<antcall target="Delete_Previous_Source_File">
+				</antcall>
+					
+				<antcall target="Move_Source_File">
+				</antcall>
+			
+				<antcall target="Import_Project">
+				</antcall>
+				
+				<antcall target="DKM_build_setflag">
+				</antcall>		
+				
+				<if>
+					<equals arg1="${cleanBuild}" arg2="ON" casesensitive="false"/>
+				<then>
+					<antcall target="Clean_Project">
+					</antcall>
+				</then>
+				<else>
+					<echo message="[Build_DKM_PC]Clean build is set as off in build definition"/>
+				</else>
+				</if>
+			
+				<if>
+					<equals arg1="${buildType}" arg2="RELEASE" casesensitive="false"/>
+				<then>
+					<antcall target="Release_Build">
+					</antcall>
+					<property name = "Image_Path" value = "${navReferenceWorspace}\${PC_DKM_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab\${PC_DKM_NAME}\NonDebug"/>
+				</then>
+				<else>
+					<antcall target="Debug_Build">
+					</antcall>
+					<property name = "Image_Path" value = "${navReferenceWorspace}\${PC_DKM_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab\${PC_DKM_NAME}\Debug"/>
+				</else>
+				</if>
+			
+				<antcall target="Build_DKM">
+				</antcall>				
+
+				<antcall target="Check_Image_And_Copy">
+				</antcall>
+			</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[Build_DKM_PC] PC DKM Build Terminated with Errors."/>
+		</catch>
+	</trycatch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="PASS"/>
+			</propertyfile>
+			<echo message="[Build_DKM_PC] PC DKM Build Completed Successfully."/>
+	</target>
+</project>
+		

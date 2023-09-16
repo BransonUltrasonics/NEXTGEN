@@ -1,0 +1,1 @@
+__FILES_COPIED_FSAPI_UTIL = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/h/public/usrFsLib.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/h/public/tarLib.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/cdf/10comp_fsutil.cdf

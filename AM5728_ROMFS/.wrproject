@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wrxml>
+    <properties platform="VxWorks7" platform_name="vxworks-7" root="0" type="VxWorksFileSystemProject"/>
+    <attributes>
+        <mapAttribute>
+            <mapAttribute key="FileSystem">
+                <mapAttribute key="TimerIntervalRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/TimerIntervalRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="Courier.ttf">
+                    <stringAttribute key="hostpath" value="/_Support_Tools/BootStrap/SC/Courier.ttf"/>
+                </mapAttribute>
+                <mapAttribute key="Port.cfg">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/Port.cfg"/>
+                </mapAttribute>
+                <mapAttribute key="RTP_SC.vxe">
+                    <stringAttribute key="hostpath" value="C:/ScriptGSX2_4/GSX2_4Stream/BuildOutput/Custom/Debug/SC/RTP_SC.vxe"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/logon.html">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/logon.html"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/index.html">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/index.html"/>
+                </mapAttribute>
+                <mapAttribute key="emllICSS.out">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/emllICSS.out"/>
+                </mapAttribute>
+                <mapAttribute key="SC_PC_AC_L1A.xml">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/SC_PC_AC_L1A.xml"/>
+                </mapAttribute>
+                <mapAttribute key="HornScanRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/HornScanRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="sample.db">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/sample.db"/>
+                </mapAttribute>
+                <mapAttribute key="AM5728_DKM_ECM.out">
+                    <stringAttribute key="hostpath" value="C:/ScriptGSX2_4/GSX2_4Stream/BuildOutput/Custom/Debug/SC/AM5728_DKM_ECM.out"/>
+                </mapAttribute>
+                <mapAttribute key="InputRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/InputRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="UpdatedSeekRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/UpdatedSeekRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/styles.css">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/styles.css"/>
+                </mapAttribute>
+                <mapAttribute key="SeekRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/SeekRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/server.pem">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/server.pem"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/uploaded.html">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/uploaded.html"/>
+                </mapAttribute>
+                <mapAttribute key="UpdatedWeldRecipe.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/SC/UpdatedWeldRecipe.txt"/>
+                </mapAttribute>
+                <mapAttribute key="Branson_gray_resize.jpg">
+                    <stringAttribute key="hostpath" value="/_Support_Tools/BootStrap/SC/Branson_gray_resize.jpg"/>
+                </mapAttribute>
+                <mapAttribute key="htdocs/rfc1213.mib">
+                    <stringAttribute key="hostpath" value="/_Branson_Driver_Layer/BRANSON_DRV/src/BransonWebservices/src/htdocs/rfc1213.mib"/>
+                </mapAttribute>
+            </mapAttribute>
+        </mapAttribute>
+    </attributes>
+</wrxml>

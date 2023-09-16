@@ -1,0 +1,1 @@
+__FILES_COPIED_BDM_NVRAM = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/cdf/40bdm_nvram.cdf C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/configlette/usrNullNvRam.c C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/configlette/usrFlashNvRam.c

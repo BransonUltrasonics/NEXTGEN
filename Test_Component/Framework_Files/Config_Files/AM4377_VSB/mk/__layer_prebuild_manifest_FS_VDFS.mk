@@ -1,0 +1,1 @@
+__FILES_COPIED_FS_VDFS = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/h/public/vdFsLib.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/cdf/10comp_vdfs.cdf

@@ -1,0 +1,1 @@
+"./i2c.o" "./qspi.o" "./qspi_app.o" "./startup_ARMCA9.o" "./uart.o" "./flash_writer/crc16.o" "./flash_writer/flash_writer_app_main.o" -Wl,-T"../AM437x.lds" -Wl,--start-group -lc -Wl,--end-group 

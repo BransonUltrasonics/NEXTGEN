@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wrxml>
+    <properties platform="VxWorks7" platform_name="vxworks-7" root="0" type="VxWorksFileSystemProject"/>
+    <attributes>
+        <mapAttribute>
+            <mapAttribute key="FileSystem">
+                <mapAttribute key="RTP_PC.vxe">
+                    <stringAttribute key="hostpath" value="C:/ScriptGSX2_4/GSX2_4Stream/BuildOutput/Custom/Debug/PC/RTP_PC.vxe"/>
+                </mapAttribute>
+                <mapAttribute key="ForceConstants.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/AC/ForceConstants.txt"/>
+                </mapAttribute>
+                <mapAttribute key="AM4377_DKM_ESS.out">
+                    <stringAttribute key="hostpath" value="C:/ScriptGSX2_4/GSX2_4Stream/BuildOutput/Custom/Debug/PC/AM4377_DKM_ESS.out"/>
+                </mapAttribute>
+                <mapAttribute key="TimerIntervalRecipefromsc.txt">
+                    <stringAttribute key="hostpath" value="./_Support_Tools/BootStrap/PC/TimerIntervalRecipefromsc.txt"/>
+                </mapAttribute>
+            </mapAttribute>
+        </mapAttribute>
+    </attributes>
+</wrxml>

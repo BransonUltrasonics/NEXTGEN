@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/zlib-1.2.8.6/cdf/zlib.cdf>
+
+Layer Layer::ZLIB {
+	NAME ZLIB
+}

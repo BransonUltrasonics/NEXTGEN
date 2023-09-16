@@ -1,0 +1,19 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/boardlib-1.1.1.0/cdf/01boardLib.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/boardlib-1.1.1.0/cdf/01warmBoot.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/boardlib-1.1.1.0/cdf/10memDesc.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/boardlib-1.1.1.0/cdf/10serial.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/utils/boardlib-1.1.1.0/cdf/10timer.cdf>
+
+Layer Layer::BOARDLIB {
+	NAME BOARDLIB
+}

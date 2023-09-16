@@ -1,0 +1,1 @@
+__FILES_COPIED_SYSTEMVIEWER_AGENT = C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/krnl/h/public/sysviewer.h C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/krnl/h/public/sv_symbol.h C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/krnl/cdf/02comp_systemviewer_agent.cdf C:/ScriptGSX2_4/GSX2_4Stream/AM4377_VSB/krnl/configlette/usrSystemViewer.c

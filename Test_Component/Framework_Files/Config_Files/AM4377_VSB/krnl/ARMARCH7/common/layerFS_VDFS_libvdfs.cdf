@@ -1,0 +1,18 @@
+ 
+/* this file is generated */
+
+Layer Layer::FS_VDFS {
+
+LIBRARIES += libvdfs.a
+
+OBJECTS libvdfs.a::vdFsLib.o
+
+}
+
+
+ObjectFile libvdfs.a::vdFsLib.o { 
+	PATH C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objvdfs/
+}
+
+
+

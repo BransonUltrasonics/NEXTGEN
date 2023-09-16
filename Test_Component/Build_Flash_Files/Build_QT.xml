@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!-- 
+#######################################################################################
+        BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics 
+
+Filename:    Build_QT.xml
+Description: This file is for QT Build using command line.
+			 
+Steps:-
+1. Generate make file using the qmake.exe
+2. Do a clean using compiler mingw32-make.exe
+3. Do a build using compiler mingw32-make.exe
+4. Check the UIController.exe is found and move the image to build_flash files folder. 
+5. The QT Compiler path and Qmake path is configured in config.ini file. 
+########################################################################################-->
+<project basedir="." name="Build_QT" default="mainTarget">
+	
+	<!--Navigates to antContrib path-->
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+
+	<!--Reading coverity build path from Config.ini file-->
+	<property name = "Make_File_Path" value = "${basedir}\\..\\QT_UIController\\Sources"/>	
+	
+	<!--Reading QMake path from Config.ini file-->
+	<property name = "QMake_Path" value = "${QT_QMAKE_PATH}"/>
+	
+	<!--Reading Compiler path from Config.ini file-->
+	<property name = "Compiler_Path" value = "${QT_COMPILER_PATH}"/>	
+
+	<!--Target to generate make file -->
+	<target name = "Generate_Make_File">
+		<echo message="[QT_Build]Generating make file using Qmake before build"/>
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+				<arg value ="/c"/>
+				<arg Value="${QMake_Path}\qmake.exe -o MakeFile ${basedir}\..\QT_UIController\Sources\UIController.pro -spec win32-g++" />
+			</exec>
+	</target>
+	
+	<!--Target to do clean before build-->
+	<target name = "Clean_Build">
+		<echo message="[QT_Build] Running clean command before build "/>
+		<exec dir = "${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+			<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+			<arg value ="/c"/>
+			<arg value ="${Compiler_Path}\mingw32-make.exe -f ${Make_File_Path}\\MakeFile.Release clean"/>
+		</exec>	
+	</target>	
+	
+	<!--Target to do QT Build -->
+	<target name = "Build">
+		<echo message="[QT_Build]Running QT Build Command"/>		
+			<exec dir="${basedir}\..\QT_UIController\Sources" executable="cmd" failonerror="true" >
+				<env key="PATH" path="C:\QT_Backup\Qt_OLD\Qt5.9.1\Tools\mingw530_32\bin;%PATH%"/>
+				<arg value ="/c"/>
+				<arg Value="${Compiler_Path}\mingw32-make.exe -j 8 -f ${Make_File_Path}\\MakeFile.Release" />
+			</exec>
+	</target>
+	
+	<!--Target to check and copyy QT Image-->
+	<target name = "Check_Image_And_Copy">
+		<available file="${basedir}\..\QT_UIController\Sources\release\UIController.exe"  property="UIController_exe.present"/>
+		<if>
+			<equals arg1="${UIController_exe.present}" arg2="true" />
+			<then>
+				<echo>[QT_Build] UIController.exe found in build path </echo>
+				<echo message="[QT_Build] Moving the QT binaries to alternative folder"/>
+				<copy todir="${basedir}\..\Build_Flash_Files\UI" file="${basedir}\..\QT_UIController\Sources\release\UIController.exe"/>
+			</then>
+		<else>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="QT_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[QT_Build] UIController.exe not found in build path."/>
+		</else>
+		</if>
+	</target>
+
+
+	<!--Main Target which invokes all sub target-->
+	<target name="mainTarget">
+	<trycatch>
+		<try>
+		
+			<echo message="[QT_Build]Starting QT Build"/>
+					
+			<antcall target="Generate_Make_File">
+			</antcall>
+			
+			<antcall target="Clean_Build">
+			</antcall>
+		
+			<antcall target="Build">
+			</antcall>
+			
+			<antcall target="Check_Image_And_Copy">
+			</antcall>
+			
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="QT_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[QT_Build] QT Build Terminated with Errors."/>
+		</catch>
+	</trycatch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="QT_Build_Status" value="PASS"/>
+			</propertyfile>
+			<echo message="[QT_Build] QT Build Completed Successfully."/>
+	</target>	
+</project>

@@ -1,0 +1,1 @@
+__FILES_COPIED_FSAPI_UTIL = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/usrFsLib.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/tarLib.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/10comp_fsutil.cdf

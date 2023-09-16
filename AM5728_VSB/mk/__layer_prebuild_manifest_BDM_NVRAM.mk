@@ -1,0 +1,1 @@
+__FILES_COPIED_BDM_NVRAM = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/40bdm_nvram.cdf C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/configlette/usrNullNvRam.c C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/configlette/usrFlashNvRam.c

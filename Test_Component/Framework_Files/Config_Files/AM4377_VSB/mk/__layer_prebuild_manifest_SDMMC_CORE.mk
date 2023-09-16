@@ -1,0 +1,1 @@
+__FILES_COPIED_SDMMC_CORE = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/h/public/vxbSdMmcLib.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/cdf/40vxbSdMmc.cdf

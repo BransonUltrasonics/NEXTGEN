@@ -1,0 +1,100 @@
+<!--
+/*******************************************************************************
+ * Licensed Materials - Property of IBM
+ * (c) Copyright IBM Corporation 2010, 2014. All Rights Reserved. 
+ * 
+ * Note to U.S. Government Users Restricted Rights:  Use, 
+ * duplication or disclosure restricted by GSA ADP Schedule 
+ * Contract with IBM Corp.
+ *******************************************************************************/
+-->
+<project name="Branson_QA" default="all" basedir=".">
+	<!-- For linux you need to specify the class path like this based on your RQMExecutionTool.jar location.
+	    <classpath>
+              <pathelement location="RQMExecutionTool/RQMExecutionTool.jar"/>
+         </classpath>
+	 -->
+	
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+        <pathelement location="${basedir}\ant-contrib-1.0b3-bin\ant-contrib\ant-contrib-1.0b3.jar"/>
+    </classpath>
+	</taskdef>
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "BAF_ULTRASONIC_LOAD_DIR" value = "C:\Branson_Automation\Build\"/>
+	
+	<!--taskdef name="executeTestCaseExecRecord" classname="com.ibm.rqm.executiontool.RQMExecuteTestCaseExecRecord"/-->
+	<taskdef name="executeTestSuiteExecRecord" classname="com.ibm.rqm.executiontool.RQMExecuteTestSuiteExecRecord">
+		<classpath>
+			<pathelement location="C:/Branson_Automation/BAF_Utilities/RQMExecutionTool/RQMExecutionTool.jar" />
+		</classpath>
+	</taskdef>
+	
+	
+	<property name="rqmUser" value="${rqm_user}" />
+	<property name="rqmPassword" value="${rqm_password}" />
+	<property name="rqmUri" value="${rqm_host}" />
+	<property name="rqmProjectName" value="${rqm_project_name}" />
+	<property name="adapterId" value="${rqm_adapter_id}" />
+	
+	<target name="all">
+			<executeTestSuiteExecRecord
+				userId="${rqmUser}"
+				password="${rqmPassword}"
+				rqmServerUrl="${rqmUri}"
+				projectName="${rqmProjectName}"
+				testSuiteExecRecordId="${testERId}"
+				suiteStepScriptIds=""
+				suiteStepAdapterIds=""
+				arguments="-exitOnComplete=true"
+			/>
+		<echo message="VERDICT: ${rqmExec:verdict}" />
+		<echo message="RESULT URL: ${rqmExec:result_url}" />
+		
+		<!--Checking if the Test_Exec_Status flag has already been set-->
+		<property file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties"/>
+		<condition property="Test_Exec_Status_Set" else="false">
+			<isset property="Test_Exec_Status"/>
+		</condition>
+
+		<if>
+			<equals arg1="${rqmExec:verdict}" arg2="com.ibm.rqm.execution.common.state.failed" casesensitive="false"/>
+			<then>
+				<propertyfile file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties">
+					<entry  key="Test_Exec_Status" value="FAIL"/>	
+				</propertyfile>
+			</then>
+			<elseif>
+				<equals arg1="${rqmExec:verdict}" arg2="com.ibm.rqm.execution.common.state.passed" casesensitive="false"/>
+				<then>
+					<propertyfile file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties">
+						<entry  key="Test_Exec_Status" value="PASS"/>
+					</propertyfile>
+				</then>
+			</elseif>
+			<elseif>
+				<equals arg1="${rqmExec:verdict}" arg2="UNKNOWN" casesensitive="false"/>
+				<then>
+					<propertyfile file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties">
+						<entry  key="Test_Exec_Status" value="FAIL"/>
+					</propertyfile>
+				</then>
+			</elseif>
+			<else>
+				<propertyfile file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties">
+					<entry  key="Test_Exec_Status" value="NA"/>
+				</propertyfile>
+			</else>
+		</if>
+		
+		<if>
+			<equals arg1="${Test_Exec_Status}" arg2="FAIL" casesensitive="false"/>
+			<then>
+				<propertyfile file="${BAF_ULTRASONIC_LOAD_DIR}\Framework_Files\Control.properties">
+					<entry  key="Test_Status" value="FAIL"/>
+				</propertyfile>
+			</then>
+		</if>
+	</target>
+</project>

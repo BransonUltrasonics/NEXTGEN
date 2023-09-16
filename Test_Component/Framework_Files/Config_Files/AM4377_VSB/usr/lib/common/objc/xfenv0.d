@@ -1,0 +1,7 @@
+C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/lib/common/objc/xfenv0.o: \
+  xfenv0.c C:/WindRiver/compilers/diab-5.9.6.1/include/diab/lpragma.h \
+  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/fenv.h \
+  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/ymath.h \
+  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/yvals.h \
+  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/xkeycheck.h
+

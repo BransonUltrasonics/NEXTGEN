@@ -1,0 +1,1 @@
+__FILES_COPIED_USB_HELPER = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/usb2Helper.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/40usb_host_class.cdf C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/configlette/usrUsb2HelperInit.c

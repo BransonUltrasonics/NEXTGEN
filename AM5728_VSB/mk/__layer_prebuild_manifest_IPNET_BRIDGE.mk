@@ -1,0 +1,1 @@
+__FILES_COPIED_IPNET_BRIDGE = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/mirrorEnd.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/bridge.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/10bridge.cdf C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/configlette/usrNetBridgeCfg.c

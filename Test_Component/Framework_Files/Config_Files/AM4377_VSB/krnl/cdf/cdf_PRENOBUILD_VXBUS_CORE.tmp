@@ -1,0 +1,16 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/drv/vxbus-1.0.5.0/core-1.0.8.1/cdf/10vxbus.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/drv/vxbus-1.0.5.0/core-1.0.8.1/cdf/40vxbNexus.cdf>
+
+Layer Layer::VXBUS_CORE {
+	NAME VXBUS_CORE
+}

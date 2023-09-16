@@ -1,0 +1,1 @@
+__FILES_COPIED_SDMMC_TIMMCHS = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/h/public/vxbTiMmchsCtrl.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/cdf/40vxbTiMmchsCtrl.cdf C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/configlette/usrTiSdMmc.c

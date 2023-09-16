@@ -1,0 +1,172 @@
+Version=1.0
+BuildSupport=Managed
+BuildCommand=%makeprefix% make --no-print-directory
+PreferredBuildSpecs=win32:A*.*
+PreferredBuildSpecs=linux:A*.*
+GlobalMacro.Name=PROJECT_TYPE
+GlobalMacro.PROJECT_TYPE.Value=DKM
+GlobalMacro.Name=DEFINES
+GlobalMacro.DEFINES.Value=
+GlobalMacro.Name=EXPAND_DBG
+GlobalMacro.EXPAND_DBG.Value=0
+GlobalMacro.Name=APICHECK_OPTIONS
+GlobalMacro.APICHECK_OPTIONS.Value=-warning
+Macro.Name=VX_CPU_FAMILY
+Macro.Name=CPU
+Macro.Name=TOOL_FAMILY
+Macro.Name=TOOL_VERSION
+Macro.Name=_CC_VERSION
+Macro.Name=TOOL
+Macro.Name=TOOL_PATH
+Macro.Name=CC_ARCH_SPEC
+Macro.Name=VSB_DIR
+Macro.Name=VSB_CONFIG_FILE
+Macro.Name=LIBPATH
+Macro.Name=LIBS
+Macro.Name=DKM_LONGCALL
+Macro.Name=APICHECK_CMD
+Macro.Name=APICHECK
+BuildTool.Name=C-Compiler
+BuildTool.C-Compiler.InputSuffixes=*.c
+BuildTool.C-Compiler.OutputIsObject=true
+BuildTool.C-Compiler.OutputCanBePassed=false
+BuildTool.Name=C++-Compiler
+BuildTool.C++-Compiler.InputSuffixes=*.cpp;*.CPP;*.C;*.cxx;*.cc
+BuildTool.C++-Compiler.OutputIsObject=true
+BuildTool.C++-Compiler.OutputCanBePassed=false
+BuildTool.Name=Linker
+BuildTool.Linker.InputSuffixes=
+BuildTool.Linker.OutputIsObject=false
+BuildTool.Linker.OutputCanBePassed=false
+BuildTool.Name=Partial Image Linker
+BuildTool.Partial Image Linker.InputSuffixes=
+BuildTool.Partial Image Linker.OutputIsObject=false
+BuildTool.Partial Image Linker.OutputCanBePassed=true
+BuildTool.Name=Librarian
+BuildTool.Librarian.InputSuffixes=
+BuildTool.Librarian.OutputIsObject=false
+BuildTool.Librarian.OutputCanBePassed=true
+BuildTool.Name=Assembler
+BuildTool.Assembler.InputSuffixes=*.s
+BuildTool.Assembler.OutputIsObject=true
+BuildTool.Assembler.OutputCanBePassed=false
+BuildSpec.Name=AM4377_VSB_ARMARCH7diab
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.VX_CPU_FAMILY.Value=arm
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.CPU.Value=ARMARCH7
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.TOOL_FAMILY.Value=diab
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.TOOL_VERSION.Value=diab_5_9_6_1
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro._CC_VERSION.Value=diab_5_9_6_1
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.TOOL.Value=diab
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.TOOL_PATH.Value=#WIND_HOME#/compilers/diab-5.9.6.1/#WIND_VX7_DIAB_HOST_TYPE#/bin
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.CC_ARCH_SPEC.Value=-tARMCORTEXA9MV:vxworks7
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.VSB_DIR.Value=C:/Users/PFitzmaurice/MyWorkspaces/LayerTest1/AM4377_VSB
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.VSB_CONFIG_FILE.Value=#VSB_DIR#/h/config/vsbConfig.h
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.LIBPATH.Value=
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.LIBS.Value=
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.DKM_LONGCALL.Value=-Xcode-absolute-far
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.APICHECK_CMD.Value=apicheck.sh -r "#VSB_DIR#/krnl/apicheck/forbidden_api.lst" -n "nmarm" -u -s "$<" "$@" #APICHECK_OPTIONS#
+BuildSpec.AM4377_VSB_ARMARCH7diab.Macro.APICHECK.Value=0
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=-I#VSB_DIR#/share/h
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=-I#VSB_DIR#/krnl/h/system
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=-I#VSB_DIR#/krnl/h/public
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7diab.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-DCPU=_VX_#CPU#
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-DTOOL_FAMILY=#TOOL_FAMILY#
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-DTOOL=#TOOL#
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-D_WRS_KERNEL
+BuildSpec.AM4377_VSB_ARMARCH7diab.SymbolList=
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-D_VSB_CONFIG_FILE=\"#VSB_DIR#/h/config/vsbConfig.h\"
+BuildSpec.AM4377_VSB_ARMARCH7diab.Symbol=-DARMEL 
+BuildSpec.AM4377_VSB_ARMARCH7diab.SymbolList=-DARM_USE_VFP
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C-Compiler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C-Compiler.DebugFlags=-g -Xdebug-dwarf3
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C-Compiler.NonDebugFlags=-XO -Xsize-opt
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C-Compiler.ToolFlags=#CC_ARCH_SPEC# -Xclib-optim-off -Xansi -Xlocal-data-area-static-only  -W:c++:.CPP  -Xfp-fast  -Xc-new -Xdialect-c89  -ei4177,4301,4550 -ei4177,4550,2273,5387,5388,1546,5849,1824 -ei4111,4171,4188,4191,4513,5457 -Xforce-declarations   -Xmake-dependency=0xd #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C-Compiler.Command=echo "building $@";%ccompilerprefix% #TOOL_PATH#/dcc %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile% && if [ "#APICHECK#" = "1" ]; then #APICHECK_CMD#;fi
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C++-Compiler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C++-Compiler.DebugFlags=-g -Xdebug-dwarf3
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C++-Compiler.NonDebugFlags=-XO -Xsize-opt
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C++-Compiler.ToolFlags=#CC_ARCH_SPEC# -Xclib-optim-off -Xansi -Xlocal-data-area-static-only  -W:c++:.CPP  -Xfp-fast  -ei4177,4301,4550 -ei4177,4550,2273,5387,5388,1546,5849,1824 -ei4111,4171,4188,4191,4513,5457 -Xforce-declarations   -Xmake-dependency=0xd #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.C++-Compiler.Command=echo "building $@";%cppcompilerprefix% #TOOL_PATH#/dcc %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_C++FLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile% && if [ "#APICHECK#" = "1" ]; then #APICHECK_CMD#;fi
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Linker.DerivedFileSignatures=*.out
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Linker.DebugFlags=-g -Xdebug-dwarf3
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Linker.NonDebugFlags=-XO -Xsize-opt
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Linker.ToolFlags=-r4
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Linker.Command=echo "building $@";rm -f %OutFile%;#TOOL_PATH#/ddump -Ng %Objects% | tclsh #WIND_BASE#/host/resource/hutils/tcl/munch.tcl -c arm -tags #VSB_DIR#/krnl/tags/dkm.tags > #OBJ_DIR#/ctdt.c;%ccompilerprefix% #TOOL_PATH#/dcc %DebugModeFlags% #CC_ARCH_SPEC# -Xdollar-in-ident -ei4177,4301,4550 -ei4177,4550,2273,5387,5388,1546,5849,1824 -ei4111,4171,4188,4191,4513,5457 -Xforce-declarations  #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES#  #DKM_LONGCALL# %Defines% #DEFINES# -o #OBJ_DIR#/ctdt.o -c #OBJ_DIR#/ctdt.c; %linkerprefix% #TOOL_PATH#/dld -tARMCORTEXA9MV:vxworks7 -X -r5 %ToolFlags% -o %OutFile% #OBJ_DIR#/ctdt.o %Objects% %Libraries% #LIBPATH# #LIBS# #ADDED_LIBPATH# #ADDED_LIBS# && if [ "#EXPAND_DBG#" = "1" ]; then plink "$@";fi
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Partial Image Linker.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Partial Image Linker.DebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Partial Image Linker.NonDebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Partial Image Linker.ToolFlags=
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Partial Image Linker.Command=echo "building $@"; %linkerprefix% #TOOL_PATH#/dld -tARMCORTEXA9MV:vxworks7 -X -r5 %ToolFlags% -o %OutFile% %Objects% #ADDED_OBJECTS# %Libraries% #LIBPATH# #LIBS# #ADDED_LIBPATH# #ADDED_LIBS# && if [ "#EXPAND_DBG#" = "1" ]; then plink "$@";fi
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Librarian.DerivedFileSignatures=*.a
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Librarian.DebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Librarian.NonDebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Librarian.ToolFlags=crus
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Librarian.Command=echo "building $@";%archiverprefix% #TOOL_PATH#/dar %ToolFlags% %OutFile% %Objects% #ADDED_OBJECTS#
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Assembler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Assembler.DebugFlags=-g -Xdebug-dwarf3
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Assembler.NonDebugFlags=-XO -Xsize-opt
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Assembler.ToolFlags=#CC_ARCH_SPEC# -Xclib-optim-off -Xansi -Xlocal-data-area-static-only  -W:c++:.CPP  -Xfp-fast  -Xc-new -Xdialect-c89  -Xpreprocess-assembly -Xcpp-no-space -Wa,-Xlit-auto-off -Wa,-Xenable-coprocessor-vfp   -Xmake-dependency=0xd #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7diab.BuildTool.Assembler.Command=echo "building $@";%assemblerprefix% #TOOL_PATH#/dcc %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile%
+BuildSpec.Name=AM4377_VSB_ARMARCH7gnu
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.VX_CPU_FAMILY.Value=arm
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.CPU.Value=ARMARCH7
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.TOOL_FAMILY.Value=gnu
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.TOOL_VERSION.Value=gnu_4_8_1_8
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro._CC_VERSION.Value=gnu_4_8_1_9
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.TOOL.Value=gnu
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.TOOL_PATH.Value=#WIND_HOME#/compilers/gnu-4.8.1.9/#WIND_VX7_GNU_HOST_TYPE#/bin
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.CC_ARCH_SPEC.Value=-t7 -mfpu=vfp -mfloat-abi=softfp
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.VSB_DIR.Value=C:/Users/PFitzmaurice/MyWorkspaces/LayerTest1/AM4377_VSB
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.VSB_CONFIG_FILE.Value=#VSB_DIR#/h/config/vsbConfig.h
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.LIBPATH.Value=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.LIBS.Value=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.DKM_LONGCALL.Value=-mlong-calls
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.APICHECK_CMD.Value=apicheck.sh -r "#VSB_DIR#/krnl/apicheck/forbidden_api.lst" -n "nmarm" -u -s "$<" "$@" #APICHECK_OPTIONS#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Macro.APICHECK.Value=0
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=-I#VSB_DIR#/share/h
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=-isystem#VSB_DIR#/krnl/h/system
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=-isystem#VSB_DIR#/krnl/h/public
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.IncludeSearchPath=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-DCPU=_VX_#CPU#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-DTOOL_FAMILY=#TOOL_FAMILY#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-DTOOL=#TOOL#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-D_WRS_KERNEL
+BuildSpec.AM4377_VSB_ARMARCH7gnu.SymbolList=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-D_VSB_CONFIG_FILE=\"#VSB_DIR#/h/config/vsbConfig.h\"
+BuildSpec.AM4377_VSB_ARMARCH7gnu.Symbol=-DARMEL 
+BuildSpec.AM4377_VSB_ARMARCH7gnu.SymbolList=-DARM_USE_VFP
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C-Compiler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C-Compiler.DebugFlags=-gdwarf-3
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C-Compiler.NonDebugFlags=-O2
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C-Compiler.ToolFlags=#CC_ARCH_SPEC# -ansi  -fno-zero-initialized-in-bss -Wall    -MD -MP #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C-Compiler.Command=echo "building $@";%ccompilerprefix% #TOOL_PATH#/ccarm %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile% && if [ "#APICHECK#" = "1" ]; then #APICHECK_CMD#;fi
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C++-Compiler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C++-Compiler.DebugFlags=-gdwarf-3
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C++-Compiler.NonDebugFlags=-O2
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C++-Compiler.ToolFlags=#CC_ARCH_SPEC# -ansi  -fno-zero-initialized-in-bss -Wall    -MD -MP #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.C++-Compiler.Command=echo "building $@";%cppcompilerprefix% #TOOL_PATH#/ccarm %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_C++FLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile% && if [ "#APICHECK#" = "1" ]; then #APICHECK_CMD#;fi
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Linker.DerivedFileSignatures=*.out
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Linker.DebugFlags=-gdwarf-3
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Linker.NonDebugFlags=-O2
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Linker.ToolFlags=-T #WIND_BASE#/build/tool/gnu_4_8_1_8/krnl/ldscripts/link.OUT
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Linker.Command=echo "building $@";rm -f %OutFile%;nmarm %Objects% | tclsh #WIND_BASE#/host/resource/hutils/tcl/munch.tcl -c arm -tags #VSB_DIR#/krnl/tags/dkm.tags > #OBJ_DIR#/ctdt.c;%ccompilerprefix% #TOOL_PATH#/ccarm %DebugModeFlags% #CC_ARCH_SPEC# -fdollars-in-identifiers -Wall   #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES#  #DKM_LONGCALL# %Defines% #DEFINES# -o #OBJ_DIR#/ctdt.o -c #OBJ_DIR#/ctdt.c; %linkerprefix% #TOOL_PATH#/ccarm -r -nostdlib -Wl,-X -Wl,-EL %ToolFlags% -o %OutFile% #OBJ_DIR#/ctdt.o %Objects% %Libraries% #LIBPATH# #LIBS# #ADDED_LIBPATH# #ADDED_LIBS# && if [ "#EXPAND_DBG#" = "1" ]; then plink "$@";fi
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Partial Image Linker.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Partial Image Linker.DebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Partial Image Linker.NonDebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Partial Image Linker.ToolFlags=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Partial Image Linker.Command=echo "building $@"; %linkerprefix% #TOOL_PATH#/ccarm -r -nostdlib -Wl,-X -Wl,-EL %ToolFlags% -o %OutFile% %Objects% #ADDED_OBJECTS# %Libraries% #LIBPATH# #LIBS# #ADDED_LIBPATH# #ADDED_LIBS# && if [ "#EXPAND_DBG#" = "1" ]; then plink "$@";fi
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Librarian.DerivedFileSignatures=*.a
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Librarian.DebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Librarian.NonDebugFlags=
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Librarian.ToolFlags=crus
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Librarian.Command=echo "building $@";%archiverprefix% #TOOL_PATH#/ararm %ToolFlags% %OutFile% %Objects% #ADDED_OBJECTS#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Assembler.DerivedFileSignatures=*.o
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Assembler.DebugFlags=-gdwarf-3
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Assembler.NonDebugFlags=-O2
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Assembler.ToolFlags=#CC_ARCH_SPEC# -ansi  -fno-zero-initialized-in-bss  -xassembler-with-cpp  -MD -MP #DKM_LONGCALL#
+BuildSpec.AM4377_VSB_ARMARCH7gnu.BuildTool.Assembler.Command=echo "building $@";%assemblerprefix% #TOOL_PATH#/ccarm %DebugModeFlags% %ToolFlags% %Defines% #DEFINES# #ADDED_CFLAGS# %Includes% #ADDED_INCLUDES# -o %OutFile% -c %InFile%

@@ -1,0 +1,8 @@
+${testERId}
+
+
+${rqm_user}
+${rqm_password}
+${rqm_host}
+${rqm_project_name}
+${rqm_adapter_id}

@@ -1,0 +1,21 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40ataDevNameConfig.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbAhciStorage.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbFslSataStorage.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbIntelAhciStorage.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbIntelIchStorage.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbPiixStorage.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/storage/bdm-1.0.1.3/sata-1.1.3.2/cdf/40vxbSI31xxStorage.cdf>
+
+Layer Layer::BDM_SATA {
+	NAME BDM_SATA
+}

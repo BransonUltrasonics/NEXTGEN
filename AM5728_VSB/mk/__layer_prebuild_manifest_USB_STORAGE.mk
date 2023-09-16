@@ -1,0 +1,1 @@
+__FILES_COPIED_USB_STORAGE = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/usbUas.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/usbMassStorage.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/usb2Msc.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/40usb_host_class_msc.cdf C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/configlette/usrUsb2MscInit.c

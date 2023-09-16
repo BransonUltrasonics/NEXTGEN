@@ -1,0 +1,23 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtArmGenIntCtlr.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtArmGenTimer.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtArmGlobalTimer.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtArmMpCoreTimer.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtArmNvic.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtCortexMSysTick.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtKinetisCache.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtPl310L2Cache.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/drv/cdf/40vxbFdtPl330Dma.cdf>
+
+Layer Layer::ARM_DRV {
+	NAME ARM_DRV
+}

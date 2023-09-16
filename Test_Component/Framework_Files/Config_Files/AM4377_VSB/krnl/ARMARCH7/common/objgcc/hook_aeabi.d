@@ -1,0 +1,2 @@
+C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objgcc/hook_aeabi.o: \
+ hook_aeabi.c

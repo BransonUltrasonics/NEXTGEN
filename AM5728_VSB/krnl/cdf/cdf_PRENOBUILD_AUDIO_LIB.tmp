@@ -1,0 +1,17 @@
+
+/* this file is generated */
+
+/* VSB is C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/ui/audio-1.0.0.2/lib-1.0.2.5/cdf/30audioLib.cdf> 
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/ui/audio-1.0.0.2/lib-1.0.2.5/cdf/40audioLibCore.cdf> 
+#include <C:/WindRiverSR500New/vxworks-7/pkgs/ui/audio-1.0.0.2/lib-1.0.2.5/cdf/40audioLibWav.cdf>
+
+Layer Layer::AUDIO_LIB {
+	NAME AUDIO_LIB
+}

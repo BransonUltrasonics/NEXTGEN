@@ -1,0 +1,14 @@
+
+# this file is generated
+
+# layers that have been built in the VSB
+__BUILT_LAYERS += IPNET_TFTP
+
+__OBJS_BUILT_IPNET_TFTP = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc_cmd_tftp.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftp_common.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftps.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc_cmd_tftp.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftp_common.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftps.d
+
+
+# built libraries
+__BUILT_LIBRARIES += krnl_ARMARCH7_common_TFTP
+
+
+__OBJS_BUILT_krnl_ARMARCH7_common_TFTP = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftpc_cmd_tftp.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftp_common.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objTFTP/iptftps.o 

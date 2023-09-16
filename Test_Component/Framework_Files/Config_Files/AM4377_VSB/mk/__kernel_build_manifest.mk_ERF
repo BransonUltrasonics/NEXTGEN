@@ -1,0 +1,14 @@
+
+# this file is generated
+
+# layers that have been built in the VSB
+__BUILT_LAYERS += ERF
+
+__OBJS_BUILT_ERF = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfLib.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfShow.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfLib.d C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfShow.d
+
+
+# built libraries
+__BUILT_LIBRARIES += krnl_ARMARCH7_common_erfLib
+
+
+__OBJS_BUILT_krnl_ARMARCH7_common_erfLib = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfLib.o  C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/krnl/ARMARCH7/common/objerfLib/erfShow.o 

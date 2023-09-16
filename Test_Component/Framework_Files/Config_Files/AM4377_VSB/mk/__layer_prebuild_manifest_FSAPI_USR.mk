@@ -1,0 +1,1 @@
+__FILES_COPIED_FSAPI_USR = C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/usrFsLib.h C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/usr/h/public/dosFsLib.h

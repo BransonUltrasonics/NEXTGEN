@@ -1,0 +1,320 @@
+<project basedir="." name="Flash" default="board_detection">
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<property environment="env" />
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	<property file="${basedir}/../Framework_Files/Control.properties"/>
+	
+	<property name="flashtoolpath" value="${basedir}\..\Flash_Utility_Tool\flash_tool" />
+	
+	
+	<macrodef name="determining_the_ccxml">
+		<attribute name="portnumber"/>
+		<sequential>
+			<replaceregexp file="${basedir}\..\Framework_Files\AM4377_Slave1.ccxml"
+               match="Value=&quot;([0-9]+)&quot;"
+               replace="Value=&quot;@{portnumber}&quot;"
+               byline="true"/>
+		</sequential>
+	</macrodef>
+	
+	<macrodef name="Importing_ccs_project">
+		<sequential>
+		<exec dir="${ccs_install_path}" executable="cmd">
+			<arg line="/c eclipsec -noSplash -data ${ccs_workspace} -application com.ti.ccstudio.apps.projectImport -ccs.location ${flashtoolpath} -ccs.copyIntoWorkspace"/>
+		</exec>
+		</sequential>	
+	</macrodef>
+	
+	<macrodef name="building_ccs_project">
+		<sequential>
+		<exec dir="${ccs_install_path}" executable="cmd">
+			<arg line="/c eclipsec -noSplash -data ${ccs_workspace} -application com.ti.ccstudio.apps.projectBuild -ccs.projects flash_tool -ccs.buildType clean"/>
+		</exec>
+		<exec dir="${ccs_install_path}" executable="cmd">
+			<arg line="/c eclipsec -noSplash -data ${ccs_workspace} -application com.ti.ccstudio.apps.projectBuild -ccs.projects flash_tool -ccs.configuration Debug"/>
+		</exec>
+		</sequential>	
+	</macrodef>
+
+	<macrodef name="loadprogram_dss_script">
+		<attribute name="ccxml"/>
+		<attribute name="binaryfile"/>
+		<sequential>
+		<exec dir="${dss_path}" executable="cmd">
+			<arg line="/c dss.bat ${basedir}\LoadProgram.js @{ccxml} @{binaryfile}"/>
+		</exec>
+		</sequential>	
+	</macrodef>
+	
+	<!--Call the bin2hex exe with the vxworks.bin as input-->
+	<target name="board_detection">
+		
+		<condition property="AC_PC_ON">
+			<or>
+			<equals arg1="${Board_Name}" arg2="AC,PC" casesensitive="false"/>
+			<equals arg1="${Board_Name}" arg2="PC,AC" casesensitive="false"/>
+			</or>
+		</condition>
+		<condition property="AC_SC_ON">
+			<or>
+			<equals arg1="${Board_Name}" arg2="AC,SC" casesensitive="false"/>
+			<equals arg1="${Board_Name}" arg2="SC,AC" casesensitive="false"/>
+			</or>
+		</condition>
+		<condition property="PC_SC_ON">
+			<or>
+			<equals arg1="${Board_Name}" arg2="SC,PC" casesensitive="false"/>
+			<equals arg1="${Board_Name}" arg2="PC,SC" casesensitive="false"/>
+			</or>
+		</condition>
+		<if>
+		<equals arg1="${Board_Name}" arg2="SC"  casesensitive="false"/>
+		<then>
+		<antcall target="SC_Flash">
+				</antcall> 
+		</then>
+		<elseif>
+		<equals arg1="${Board_Name}" arg2="PC" casesensitive="false"/>
+		<then>
+		<antcall target="PC_Flash">
+				</antcall>
+		</then>
+		</elseif>
+		<elseif>
+		<equals arg1="${Board_Name}" arg2="AC" casesensitive="false"/>
+		<then>
+		<antcall target="AC_Flash">
+				</antcall>
+		</then>
+		</elseif>
+		
+		<elseif>
+		<equals arg1="${AC_PC_ON}" arg2="true"/>
+		<then>
+		<antcall target="AC_Flash"></antcall>
+		<antcall target="PC_Flash"></antcall>
+		</then>
+		</elseif>
+		<elseif>
+		<equals arg1="${AC_SC_ON}" arg2="true"/>
+		<then>
+		<antcall target="AC_Flash"></antcall>
+		<antcall target="SC_Flash"></antcall>
+		</then>
+		</elseif>
+		<elseif>
+		<equals arg1="${PC_SC_ON}" arg2="true"/>
+		<then>
+		<antcall target="PC_Flash"></antcall>
+		<antcall target="SC_Flash"></antcall>
+		</then>
+		</elseif>
+		<else>
+		<antcall target="PC_Flash"></antcall>
+		<antcall target="SC_Flash"></antcall>
+		<antcall target="AC_Flash"></antcall>
+		</else>
+		</if>
+		
+	</target>
+	
+	<macrodef name="bin2hex">
+		<attribute name="file"/>
+		<sequential>
+		<exec dir="${basedir}" executable="cmd">
+			<arg line="/c python bin2header_modified.py @{file} vxworks.h"/>
+		</exec>
+		</sequential>	
+	</macrodef>
+			
+	<target name="AC_Flash">
+		<property name="vxworks_bin" value="${StoragePath}\Build_Images_${Date_Time_Stamp}\AC\vxWorks.bin"/>
+		<trycatch>
+		<try>
+		<bin2hex file="${vxworks_bin}"/>
+		</try>
+		<catch>
+			<echo message=" ****Problem in running the bin2hex script****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Flash_Status" value="FAIL"/>
+				<entry  key="AC_Flash_Error_Description" value="Converting bin to hexadecimal file failed"/>
+			</propertyfile>
+			<fail message="Problem in running the bin2hex script"/>
+		</catch>
+		</trycatch>
+		
+		<copy todir="${basedir}\..\Flash_Utility_Tool\flash_tool\flash_writer">
+			<fileset file="${basedir}\vxworks.h"/>
+		</copy>
+	
+		<echo>Setting the workspace</echo>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Integration Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+		</then>
+		</if>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Branson Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_BRANSON_PATH}"/>
+		</then>
+		</if>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Sasken Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_SASKEN_PATH}"/>
+		</then>
+		</if>
+		<trycatch>
+		<try>
+		<Importing_ccs_project />
+		</try>
+		<catch>
+			<echo message=" ****Problem in importing ccs project****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Flash_Status" value="FAIL"/>
+				<entry  key="AC_Flash_Error_Description" value="Problem in importing ccs project"/>
+			</propertyfile>
+			<fail message="Problem in importing ccs project"/>
+		</catch>
+		</trycatch>
+		<trycatch>
+		<try>
+		<building_ccs_project />
+		</try>
+		<catch>
+			<echo message=" ****Problem in building ccs project****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Flash_Status" value="FAIL"/>
+				<entry  key="AC_Flash_Error_Description" value="Problem in building ccs project"/>
+			</propertyfile>
+			<fail message="Problem in building ccs project"/>
+		</catch>
+		</trycatch>
+		
+		<determining_the_ccxml portnumber="${AC_COM_PORT}"/>
+		<trycatch>
+		<try>
+		<loadprogram_dss_script ccxml="${basedir}\..\Framework_Files\AM4377_Slave1.ccxml" binaryfile="${flashtoolpath}\Debug\flash_tool.out" />
+		</try>
+		<catch>
+			<echo message=" ****Problem in running the dss script for running the binary****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Flash_Status" value="FAIL"/>
+				<entry  key="AC_Flash_Error_Description" value="Dss script failed"/>
+			</propertyfile>
+			<fail message="DSS script failed"/>
+		</catch>
+		</trycatch>
+		<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Flash_Status" value="PASS"/>
+		</propertyfile>
+	</target>
+	
+	<target name="PC_Flash">
+		<property name="vxworks_bin" value="${StoragePath}\Build_Images_${Date_Time_Stamp}\PC\vxWorks.bin"/>
+		<trycatch>
+		<try>
+		<bin2hex file="${vxworks_bin}"/>
+		</try>
+		<catch>
+			<echo message=" ****Problem in running the bin2hex script****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Flash_Status" value="FAIL"/>
+				<entry  key="PC_Flash_Error_Description" value="Converting bin to hexadecimal file failed"/>
+			</propertyfile>
+			<fail message="Problem in running the bin2hex script"/>
+		</catch>
+		</trycatch>
+		
+		<copy todir="${basedir}\..\Flash_Utility_Tool\flash_tool\flash_writer">
+			<fileset file="${basedir}\vxworks.h"/>
+		</copy>
+	
+		<echo>Setting the workspace</echo>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Integration Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+		</then>
+		</if>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Branson Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_BRANSON_PATH}"/>
+		</then>
+		</if>
+		<if>
+			<equals arg1="${Stream_Name}" arg2="Next Gen Sasken Dev Stream"/>
+		<then>
+			<property name="ccs_workspace" value="${WORKSPACE_SASKEN_PATH}"/>
+		</then>
+		</if>
+		<trycatch>
+		<try>
+		<Importing_ccs_project />
+		</try>
+		<catch>
+			<echo message=" ****Problem in importing ccs project****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Flash_Status" value="FAIL"/>
+				<entry  key="PC_Flash_Error_Description" value="Problem in importing ccs project"/>
+			</propertyfile>
+			<fail message="Problem in importing ccs project"/>
+		</catch>
+		</trycatch>
+		<trycatch>
+		<try>
+		<building_ccs_project />
+		</try>
+		<catch>
+			<echo message=" ****Problem in building ccs project****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Flash_Status" value="FAIL"/>
+				<entry  key="PC_Flash_Error_Description" value="Problem in building ccs project"/>
+			</propertyfile>
+			<fail message="Problem in building ccs project"/>
+		</catch>
+		</trycatch>
+		
+		<determining_the_ccxml portnumber="${PC_COM_PORT}"/>
+		<trycatch>
+		<try>
+		<loadprogram_dss_script ccxml="${basedir}\..\Framework_Files\AM4377_Slave1.ccxml" binaryfile="${flashtoolpath}\Debug\flash_tool.out" />
+		</try>
+		<catch>
+			<echo message=" ****Problem in running the dss script for running the binary****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Flash_Status" value="FAIL"/>
+				<entry  key="PC_Flash_Error_Description" value="Dss script failed"/>
+			</propertyfile>
+			<fail message="DSS script failed"/>
+		</catch>
+		</trycatch>
+		<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="PC_Flash_Status" value="PASS"/>
+		</propertyfile>
+	</target>
+	
+	<target name="SC_Flash">
+		<echo>"Inside SC Flash"</echo>
+	</target>
+
+	
+</project>
+				

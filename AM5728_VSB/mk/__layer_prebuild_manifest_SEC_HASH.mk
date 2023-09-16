@@ -1,0 +1,1 @@
+__FILES_COPIED_SEC_HASH = C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/secHash.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/secHmac.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/h/public/secPbkdf2.h C:/ScriptGSX2_4/GSX2_4Stream/AM5728_VSB/krnl/cdf/00comp_secHash.cdf

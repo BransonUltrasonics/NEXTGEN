@@ -1,0 +1,15 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/connectivity/usb-1.1.0.6/core-1.0.2.9/cdf/40usb.cdf>
+
+Layer Layer::USB_CORE {
+	NAME USB_CORE
+}

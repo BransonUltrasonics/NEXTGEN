@@ -1,0 +1,16 @@
+
+/* this file is generated */
+
+/* VSB is C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB */
+/* defvars included : TRUE */
+
+
+#include <C:/Users/builder5/Desktop/Paul/MyWorkspaces/NextGen/Integration/AM4377_VSB/h/config/vsbConfig.h>
+
+
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/armv7a/cdf/30arch.cdf> 
+#include <C:/WindRiver/vxworks-7/pkgs/os/arch/arm-1.1.9.1/kernel/armv7a/cdf/30bsp.cdf>
+
+Layer Layer::ARM_ARMV7A {
+	NAME ARM_ARMV7A
+}

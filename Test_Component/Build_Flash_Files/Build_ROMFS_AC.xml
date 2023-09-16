@@ -1,0 +1,252 @@
+<project basedir="." name="Build_AC_ROMFS" default="main">
+
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!--Navigates to the control.properties path-->
+	<property name = "navControl" value = "\..\Framework_Files\"/>
+	
+	<property environment="env" />
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>
+	<sleep seconds="2"/>
+	<property file="${basedir}/../Framework_Files/Control.properties"/>	
+
+	<!--VSB Project Name-->
+	<property name = "vsbName" value = "${AC_PC_VSB_NAME}"/>
+	
+	<!--VIP Project Name-->
+	<property name = "vipName" value = "${AC_PC_VIP_NAME}"/>
+	
+	<!--DKM Project Name-->
+	<property name="dkmName" value="${AC_DKM_NAME}"/>
+	
+	<!--RTP Project Name-->
+	<property name="rtpName" value="${AC_RTP_NAME}"/>
+	
+	<!--ROMFS Project Name-->
+	<property name="romfsName" value="${AC_ROMFS_NAME}" />
+	
+	<!--Setting the emllcpsw.out -->
+	<property name="EMLLCPSW_PATH" value="${env.BAF_ULTRASONIC_LOAD_DIR}\_Support_Tools\BootStrap\AC\emllCPSW.out" />
+	
+	<!--Set Workspace path based on stream name -->
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Integration Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Branson Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_BRANSON_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Sasken Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_SASKEN_PATH}"/>
+	</then>
+	</if>
+	
+	<!--Delete previous source files in reference workspace -->
+	<target name = "Delete_Previous_Source_File">
+		<echo message="[Build_AC_ROMFS]Delete previous Source files if exist from reference workspace"/>
+		<available file="${navReferenceWorspace}\${romfsName}"  type="dir" property="Source.present"/>
+		<if>
+		<equals arg1="${Source.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<exec executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${romfsName}"/>
+			</exec>
+			<echo message="[Build_AC_ROMFS] Previous source files deleted successfully" />
+		</then>
+		</if>
+	</target>
+
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_File">
+		<echo message="[Build_AC_ROMFS]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${romfsName}" >
+			<fileset dir="${basedir}\..\${romfsName}" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Clean Project -->
+	<target name = "Clean_Project">
+		<echo message="[Build_AC_ROMFS]Clean VIP Project before build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj clean ${vipName}"/>
+			</exec>
+	</target>
+	
+	<!--Import ROMFS Project in  reference workspace -->
+	<target name = "Import_Project">
+		<echo message="[Build_AC_ROMFS]Import ROMFS Project before build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj import ${romfsName}"/>
+			</exec>
+	</target>
+
+	
+	<macrodef name="romfs_file_path_addition">
+		<attribute name="file"/>
+		
+		<sequential>
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj romfs add -file @{file} ${romfsName}"/>
+			</exec>
+		</sequential>	
+	</macrodef>
+	
+	<target name="romfsaddfile">
+		<echo message="[Build_AC_ROMFS]Starting ROMFS Add file"/>
+		<trycatch>
+			<try>
+			<echo message="[Build_AC_ROMFS]Starting ROMFS Add file"/>
+			<available file="${DKM_Image_Path}"  property="dkm.present"/>
+			<if>
+			<equals arg1="${dkm.present}" arg2="true" />
+			<then>
+				<echo message="[Build_AC_ROMFS] ****Adding DKM .out files to the ROMFS project****" />
+				<romfs_file_path_addition file="${DKM_Image_Path}"/>
+			</then>
+			</if>
+			<available file="${RTP_Image_Path}"  property="rtp.present"/>
+			<if>
+			<equals arg1="${rtp.present}" arg2="true" />
+			<then>
+				<echo message="[Build_AC_ROMFS] ****Adding rtp.vxe files to the ROMFS project****" />
+				<romfs_file_path_addition file="${RTP_Image_Path}"/>
+			</then>
+			</if>
+			</try>
+			<catch>
+			<echo message="[Build_AC_ROMFS] ****Adding files to the ROMFS project failed****" />
+			<propertyfile file="${basedir}${navControl}Control.properties">
+				<entry  key="AC_Build_Status" value="FAIL"/>
+				<entry  key="AC_Build_Error_Description" value="Adding files to the ROMFS project failed"/>
+			</propertyfile>
+			<fail message="[Build_AC_ROMFS] Adding files to the ROMFS project failed"/>
+			</catch>
+		</trycatch>
+	</target>
+	
+		
+	<!--Add support tools to romfs project-->
+	<target name = "Add_Support_Tools">
+		<echo message="[Build_AC_ROMFS]Move Support tools to ROMFS Project"/>
+		<copy todir="${navReferenceWorspace}\${romfsName}\_Support_Tools" >
+			<fileset dir="${basedir}\..\_Support_Tools" includes="**"/>  
+		</copy>
+	</target>
+	
+	<!--Add ROMFS Project as subproject to VIP-->
+	<target name = "Add_Sub_Project">
+		<echo message="[Build_AC_ROMFS]Adding ROMFS Project as subproject to VIP"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="false" >
+				<arg value ="/c wrtool prj subproject add ${romfsName} ${vipName}"/>
+			</exec>
+	</target>
+	
+	<!--Target to perform VIP Build-->
+	<target name="vipBuild">
+		<echo message="[Build_AC_ROMFS] ****Performing VIP Build****" />
+		<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg line="/c wrtool.bat prj build ${vipName}"/>
+		</exec>
+		<available file="${navReferenceWorspace}\${vipName}\default\vxWorks.bin"  property="binary.present"/>
+		<if>
+			<equals arg1="${binary.present}" arg2="true" />
+			<then>
+				<echo message="[Build_AC_ROMFS] VIP build successfully"/>
+				<echo message="[Build_AC_ROMFS] Moving binaries to alternative folder"/>
+				<copy todir="${basedir}\..\Build_Flash_Files\AC" file="${navReferenceWorspace}\${vipName}\default\vxWorks.bin"/>
+				<sleep seconds="5"/>
+				<move file="${basedir}\..\Build_Flash_Files\AC\vxWorks.bin" tofile="${basedir}\..\Build_Flash_Files\AC\AC_vxWorks.bin"/>
+				<sleep seconds="5"/>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Build_Status" value="PASS"/>
+				</propertyfile>
+			</then>
+		<elseif>
+			<equals arg1="${binary.present}" arg2="false" />
+			<then>
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Build_Status" value="FAIL"/>
+					<entry  key="AC_Build_Error_Description" value="VxWorks.bin was not found in the given path"/>
+				</propertyfile>
+				<fail message="VIP Build Terminated with Errors."/>
+			</then>
+		</elseif>
+		</if>
+	</target>
+	
+	<target name="main">
+		<trycatch>
+			<try>
+				<antcall target="Delete_Previous_Source_File">
+				</antcall>
+				
+				<antcall target="Move_Source_File">
+				</antcall>
+				
+				<if>
+					<equals arg1="${cleanBuild}" arg2="ON" casesensitive="false"/>
+				<then>
+					<antcall target="Clean_Project">
+					</antcall>
+				</then>
+				<else>
+					<echo message="[Build_PC_ROMFS]Clean build is set as off in build definition"/>
+				</else>
+				</if>				
+							
+				<if>
+					<equals arg1="${buildType}" arg2="RELEASE" casesensitive="false"/>
+				<then>
+					<property name = "DKM_Image_Path" value = "${navReferenceWorspace}\${AC_DKM_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diad\${AC_DKM_NAME}\NonDebug\${AC_DKM_NAME}.out"/>
+					<property name = "RTP_Image_Path" value = "${navReferenceWorspace}\${AC_RTP_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab_C++2003\${AC_RTP_NAME}\NonDebug\${AC_RTP_NAME}.vxe"/>				
+				</then>
+				<else>
+					<property name = "DKM_Image_Path" value = "${navReferenceWorspace}\${AC_DKM_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab\${AC_DKM_NAME}\Debug\${AC_DKM_NAME}.out"/>
+					<property name = "RTP_Image_Path" value = "${navReferenceWorspace}\${AC_RTP_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab_C++2003\${AC_RTP_NAME}\Debug\${AC_RTP_NAME}.vxe"/>
+				</else>
+				</if>			
+
+				<antcall target="Import_Project">
+				</antcall>				
+				
+				<antcall target="romfsaddfile">
+				</antcall>
+
+				<antcall target="Add_Support_Tools">
+				</antcall>	
+
+				<antcall target="Add_Sub_Project">
+				</antcall>									
+				
+				<antcall target="vipBuild">
+				</antcall> 
+				
+			</try>
+			<catch>
+				<echo message="[Build_AC_ROMFS] An exception occured during AC_ROMFS build" />
+				<propertyfile file="${basedir}${navControl}Control.properties">
+					<entry  key="AC_Build_Status" value="FAIL"/>
+					<entry  key="AC_Build_Error_Description" value=""/>
+				</propertyfile>
+				<fail message="[Build_AC_ROMFS] AC_ROMFS Build Terminated with Errors."/>
+			</catch>
+		</trycatch>
+	</target>
+</project>
+		

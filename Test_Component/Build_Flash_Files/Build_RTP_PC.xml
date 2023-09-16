@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<!-- 
+#######################################################################################
+        BRANSON AUTOMATION FRAMEWORK - Next Gen Ultrasonics 
+
+Filename:    Build_RTP_PC.xml
+Description: This file is to Build RTP PC using command line.
+			 
+Steps:-
+1. Move Source files from load directory to reference workspace
+2. Import project using wrtool command
+3. Do clean project and set build type as debug or release based on build definition.
+4. Build RTP Project using wrtool command.  
+4. Check the build image .vxe is found and move the image to build_flash files folder. 
+
+########################################################################################-->
+<project basedir="." name="Build_RTP_PC" default="mainTarget">
+	
+	<!--Navigates to antContrib path-->
+	<property name = "navContrib" value = "\..\Framework_Files\ant-contrib-1.0b3-bin\ant-contrib\"/>
+	
+	<!--Setting antcontrib path-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+		<classpath>
+			<pathelement location="${basedir}${navContrib}ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<!--Load config.ini properties-->
+	<property file = "${basedir}/../../BAF_Utilities/config.ini"/>	
+
+	<!--Set Workspace path based on stream name -->
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Integration Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_INTEGRATION_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Branson Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_BRANSON_PATH}"/>
+	</then>
+	</if>	
+	<if>
+	<equals arg1="${streamName}" arg2="Next Gen Sasken Dev Stream" casesensitive="false"/>
+	<then>
+	<property name="navReferenceWorspace" value="${WORKSPACE_SASKEN_PATH}"/>
+	</then>
+	</if>
+	
+	<!--Delete previous source files in reference workspace -->
+	<target name = "Delete_Previous_Source_File">
+		<echo message="[Build_RTP_PC]Delete previous Source files if exist from reference workspace"/>
+		<available file="${navReferenceWorspace}\${PC_RTP_NAME}"  type="dir" property="Source.present"/>
+		<if>
+		<equals arg1="${Source.present}" arg2="true" casesensitive="false"/>
+		<then>
+			<exec executable="cmd" failonerror="true" >
+				<arg line="/c rmdir /s /q ${navReferenceWorspace}\${PC_RTP_NAME}"/>
+			</exec>
+			<echo message="[Build_RTP_PC] Previous source files deleted successfully" />
+		</then>
+		</if>
+	</target>
+
+	<!--Move Source files from Load dir to reference workspace -->
+	<target name = "Move_Source_File">
+		<echo message="[Build_RTP_PC]Move Source files to reference workspace"/>
+		<copy todir="${navReferenceWorspace}\${PC_RTP_NAME}" >
+			<fileset dir="${basedir}\..\${PC_RTP_NAME}" includes="**"/>  
+		</copy>
+	</target>	
+	
+	<!--Import Project for build -->
+	<target name = "Import_Project">
+		<echo message="[Build_RTP_PC]Importing RTP PC Project for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj import ${PC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Clean Project -->
+	<target name = "Clean_Project">
+		<echo message="[Build_RTP_PC]Clean RTP PC Project before build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj clean ${PC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Set Release Mode Build-->
+	<target name = "Release_Build">
+		<echo message="[Build_RTP_PC]Setting Release mode for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj debugmode set off ${PC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Set Debug Mode Build-->
+	<target name = "Debug_Build">
+		<echo message="[Build_RTP_PC]Setting Debug mode for build"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj debugmode set on ${PC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Build RTP Project -->
+	<target name = "Build_RTP">
+		<echo message="[Build_RTP_PC]Building RTP PC Project"/>		
+			<exec dir="${navReferenceWorspace}" executable="cmd" failonerror="true" >
+				<arg value ="/c wrtool prj build ${PC_RTP_NAME}"/>
+			</exec>
+	</target>
+	
+	<!--Target to check and copy RTP Image-->
+	<target name = "Check_Image_And_Copy">
+		<available file="${Image_Path}\${PC_RTP_NAME}.vxe"  property="Image_File.present"/>
+		<if>
+			<equals arg1="${Image_File.present}" arg2="true" />
+			<then>
+				<echo>[Build_RTP_PC] RTP_PC.vxe found in build path </echo>
+				<echo message="[Build_RTP_PC] Moving the RTP_PC.vxe binary to alternative folder"/>
+				<copy todir="${basedir}\..\Build_Flash_Files\PC" file="${Image_Path}\${PC_RTP_NAME}.vxe"/>
+			</then>
+		<else>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[Build_RTP_PC] RTP_PC.vxe not found in build path."/>
+		</else>
+		</if>
+	</target>
+
+
+	<!--Main Target which invokes all sub target-->
+	<target name="mainTarget">
+	<trycatch>
+		<try>
+		
+			<echo message="[Build_RTP_PC]Starting Build RTP PC"/>
+			
+			<antcall target="Delete_Previous_Source_File">
+			</antcall>
+					
+			<antcall target="Move_Source_File">
+			</antcall>
+			
+			<antcall target="Import_Project">
+			</antcall>
+			
+			<if>
+				<equals arg1="${cleanBuild}" arg2="ON" casesensitive="false"/>
+			<then>
+				<antcall target="Clean_Project">
+				</antcall>
+			</then>
+			<else>
+				<echo message="[Build_RTP_PC]Clean build is set as off in build definition"/>
+			</else>
+			</if>
+			
+			<if>
+				<equals arg1="${buildType}" arg2="RELEASE" casesensitive="false"/>
+			<then>
+				<antcall target="Release_Build">
+				</antcall>
+				<property name = "Image_Path" value = "${navReferenceWorspace}\${PC_RTP_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab_C++2003\${PC_RTP_NAME}\NonDebug"/>
+			</then>
+			<else>
+				<antcall target="Debug_Build">
+				</antcall>
+				<property name = "Image_Path" value = "${navReferenceWorspace}\${PC_RTP_NAME}\${AC_PC_VSB_NAME}_ARMARCH7diab_C++2003\${PC_RTP_NAME}\Debug"/>
+			</else>
+			</if>
+		
+			<antcall target="Build_RTP">
+			</antcall>
+			
+			<antcall target="Check_Image_And_Copy">
+			</antcall>
+			
+		</try>
+		<catch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="FAIL"/>
+			</propertyfile>
+			<fail message="[Build_RTP_PC] PC RTP Build Terminated with Errors."/>
+		</catch>
+	</trycatch>
+			<propertyfile file="${basedir}\..\Framework_Files\Control.properties">
+				<entry  key="PC_Build_Status" value="PASS"/>
+			</propertyfile>
+			<echo message="[Build_RTP_PC] PC RTP Build Completed Successfully."/>
+	</target>	
+</project>
